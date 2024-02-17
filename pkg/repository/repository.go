@@ -21,12 +21,12 @@ func (r *Repository[T]) Create(ctx context.Context, t *T) (*T, error) {
 	return t, nil
 }
 
-func (r *Repository[T]) Find(ctx context.Context, conds ...interface{}) ([]*T, error) {
+func (r *Repository[T]) Find(ctx context.Context, conds ...interface{}) ([]T, error) {
 	var (
-		dest []*T
+		dest []T
 	)
 
-	if err := r.db.WithContext(ctx).Find(dest, conds...).Error; err != nil {
+	if err := r.db.WithContext(ctx).Find(&dest, conds...).Error; err != nil {
 		return nil, err
 	}
 	return dest, nil
@@ -34,22 +34,18 @@ func (r *Repository[T]) Find(ctx context.Context, conds ...interface{}) ([]*T, e
 
 func (r *Repository[T]) Get(ctx context.Context, conds ...interface{}) (*T, error) {
 	var (
-		dest *T
+		dest T
 	)
-	if err := r.db.WithContext(ctx).First(dest, conds...).Error; err != nil {
+
+	if err := r.db.WithContext(ctx).Model(&dest).First(&dest, conds...).Error; err != nil {
 		return nil, err
 	}
-	return dest, nil
+
+	return &dest, nil
 }
 
-func (r *Repository[T]) Update(ctx context.Context, column string, value interface{}) (*T, error) {
-	var (
-		dest *T
-	)
-	if err := r.db.WithContext(ctx).Update(column, value).Find(dest).Error; err != nil {
-		return nil, err
-	}
-	return dest, nil
+func (r *Repository[T]) Update(ctx context.Context, E *T) error {
+	return r.db.WithContext(ctx).Updates(E).Error
 }
 
 func (r *Repository[T]) Delete(ctx context.Context, t *T) error {

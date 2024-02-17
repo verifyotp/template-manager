@@ -1,4 +1,4 @@
-package app
+package auth
 
 import (
 	"context"
@@ -42,13 +42,13 @@ func New(config *config.Config, email email.Provider, logger *slog.Logger, db *r
 }
 
 func (a *App) Signup(ctx context.Context, req shared.SignUpRequest) error {
-	var acc = entity.Account{
+	var account = entity.Account{
 		Email: req.Email,
 	}
 
 	// generate password
 	randomPassword := entity.GenerateRandomPassword()
-	if err := acc.SetPassword(randomPassword); err != nil {
+	if err := account.SetPassword(randomPassword); err != nil {
 		a.logger.ErrorContext(ctx, "failed to set password %+v", err)
 		return err
 	}
@@ -58,7 +58,7 @@ func (a *App) Signup(ctx context.Context, req shared.SignUpRequest) error {
 		return errors.New("account already exists")
 	}
 
-	if _, err := a.db.AuthRepository.Create(ctx, &acc); err != nil {
+	if _, err := a.db.AuthRepository.Create(ctx, &account); err != nil {
 		a.logger.ErrorContext(ctx, "failed to create account %+v", err)
 		return err
 	}
@@ -82,21 +82,25 @@ const (
 )
 
 func (a *App) Login(ctx context.Context, req shared.LoginRequest) (*shared.LoginResponse, error) {
-	// find existing account
-	var acc = entity.Account{
-		Email: req.Email,
-	}
-	if _, err := a.db.AuthRepository.Get(ctx, "email = ?", acc.Email); err != nil {
+
+	fetchedAccount, err := a.db.AuthRepository.Get(ctx, "email = ?", req.Email)
+	if err != nil {
 		a.logger.InfoContext(ctx, "failed to find account %+v", err)
 		return nil, errors.New(LoginFailed)
 	}
 	// check password
-	if !acc.ComparePassword(req.Password) {
+	if !fetchedAccount.ComparePassword(req.Password) {
 		return nil, errors.New(LoginFailed)
 	}
 
+	// delete existing sessions
+	if err := a.sess.Delete(ctx, fetchedAccount.ID); err != nil {
+		a.logger.ErrorContext(ctx, "failed to delete session %+v", err)
+		return nil, err
+	}
+
 	// create session
-	sess, err := a.sess.Create(ctx, acc.ID, req.Device)
+	sess, err := a.sess.Create(ctx, fetchedAccount.ID, req.Device)
 	if err != nil {
 		a.logger.ErrorContext(ctx, "failed to create session %+v", err)
 		return nil, err
@@ -104,14 +108,9 @@ func (a *App) Login(ctx context.Context, req shared.LoginRequest) (*shared.Login
 
 	// return token
 	return &shared.LoginResponse{
-		Email:     acc.Email,
-		Token:     sess.Token,
-		ExpiresAt: sess.ExpiresAt,
+		Account: fetchedAccount,
+		Session: sess,
 	}, nil
-}
-
-func (a *App) Logout(ctx context.Context, req shared.LogoutRequest) error {
-	return a.sess.Expire(ctx, req.Token)
 }
 
 func (a *App) InitiateResetPassword(ctx context.Context, req shared.InitiateResetPasswordRequest) error {
@@ -130,11 +129,19 @@ func (a *App) InitiateResetPassword(ctx context.Context, req shared.InitiateRese
 		a.logger.ErrorContext(ctx, "failed to set password %+v", err)
 		return err
 	}
+
+	// update account
+	if err := a.db.AuthRepository.Update(ctx, acc); err != nil {
+		a.logger.ErrorContext(ctx, "failed to update account %+v", err)
+		return err
+	}
+
 	//send email
 	vars := map[string]any{
-		"to":      req.Email,
-		"subject": "Welcome to Template Manager",
-		"body":    "Your password is " + randomPassword,
+		"to":           req.Email,
+		"subject":      "Password Reset",
+		"password":     randomPassword,
+		"company_name": "Template Manager",
 	}
 	if err := a.email.Send(ctx, email.TemplateIDSignupVerification, vars); err != nil {
 		a.logger.ErrorContext(ctx, "failed to send email %+v", err)
@@ -142,4 +149,8 @@ func (a *App) InitiateResetPassword(ctx context.Context, req shared.InitiateRese
 	}
 
 	return nil
+}
+
+func (a *App) Logout(ctx context.Context, req shared.LogoutRequest) error {
+	return a.sess.Expire(ctx, req.Token)
 }

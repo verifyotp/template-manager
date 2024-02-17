@@ -12,32 +12,27 @@ func (s *server) AddKey(c *fiber.Ctx) error {
 	var request shared.CreateAccessKeyRequest
 	err := c.BodyParser(&request)
 	if err != nil {
-		return HandleError(c, err)
+		return HandleBadRequest(c, err)
 	}
 
-	err = s.app.CreateAccessKey(ctx, request)
+	err = s.authApp.CreateAccessKey(ctx, request)
 	if err != nil {
 		return HandleError(c, err)
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "success",
-	})
+	return HandleSuccess(c, "successfully created key", nil)
 }
 
 func (s *server) ListAccessKeys(c *fiber.Ctx) error {
 	ctx := c.Context()
 
 	var request shared.ListAccessKeysRequest
-	keys, err := s.app.ListAccessKeys(ctx, request)
+	keys, err := s.authApp.ListAccessKeys(ctx, request)
 	if err != nil {
 		return HandleError(c, err)
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "pong",
-		"keys":    keys,
-	})
+	return HandleSuccess(c, "successfully retrieved key", keys)
 }
 
 func (s *server) DeleteKey(c *fiber.Ctx) error {
@@ -47,12 +42,10 @@ func (s *server) DeleteKey(c *fiber.Ctx) error {
 	request := shared.DeleteAccessKeyRequest{
 		AccessKeyID: ID,
 	}
-	err := s.app.DeleteAccessKey(ctx, request)
+	err := s.authApp.DeleteAccessKey(ctx, request)
 	if err != nil {
 		return HandleError(c, err)
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "pong",
-	})
+	return HandleSuccess(c, "successfully deleted key", nil)
 }

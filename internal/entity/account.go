@@ -16,8 +16,8 @@ import (
 type Account struct {
 	ID             string     `json:"id" gorm:"primaryKey;column:id"`
 	Email          string     `json:"email" gorm:"unique;column:email"`
-	HashSalt       string     `json:"hash_salt" gorm:"column:hash_salt"`
-	HashedPassword string     `json:"hashed_password" gorm:"column:hashed_password"`
+	HashSalt       string     `json:"-" gorm:"column:hash_salt"`
+	HashedPassword string     `json:"-" gorm:"column:hashed_password"`
 	VerifiedAt     *time.Time `json:"verified_at" gorm:"column:verified_at"`
 	CreatedAt      time.Time  `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt      *time.Time `json:"updated_at" gorm:"column:updated_at"`
@@ -95,13 +95,14 @@ func (d *Device) Scan(src any) error {
 }
 
 type Session struct {
-	ID         string    `json:"id" gorm:"primaryKey;column:id"`
-	AccountID  string    `json:"account_id" gorm:"column:account_id;not null"`
-	Device     Device    `json:"device" gorm:"column:device;type:jsonb;"`
-	Token      string    `json:"token" gorm:"column:token;not null"`
-	ExpiresAt  time.Time `json:"expires_at" gorm:"column:expires_at;not null"`
-	LastActive time.Time `json:"last_active" gorm:"column:last_active;not null;default:current_timestamp"`
-	CreatedAt  time.Time `json:"created_at" gorm:"column:created_at;type:timestamptz"`
+	ID         string         `json:"id" gorm:"primaryKey;column:id"`
+	AccountID  string         `json:"account_id" gorm:"column:account_id;not null"`
+	Device     Device         `json:"device" gorm:"column:device;type:jsonb;"`
+	Token      string         `json:"token" gorm:"column:token;not null"`
+	ExpiresAt  time.Time      `json:"expires_at" gorm:"column:expires_at;not null"`
+	LastActive time.Time      `json:"last_active" gorm:"column:last_active;not null;default:current_timestamp"`
+	CreatedAt  time.Time      `json:"created_at" gorm:"column:created_at;type:timestamptz"`
+	DeletedAt  gorm.DeletedAt `json:"-" gorm:"column:deleted_at;index;null"`
 }
 
 func (Session) TableName() string {

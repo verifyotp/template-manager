@@ -12,8 +12,7 @@ type Key struct {
 	AccountID string `json:"account_id" gorm:"column:account_id;not null"`
 	Name      string `json:"name" gorm:"column:name;not null"`
 
-	Public    string    `json:"public" gorm:"column:public;not null"` // only this in use
-	Private   string    `json:"private" gorm:"column:private;not null"`
+	Secret    string    `json:"secret" gorm:"column:secret;type:text;not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"column:created_at;type:timestamptz"`
 
 	Account *Account `json:"-" gorm:"foreignKey:AccountID"`
@@ -35,7 +34,6 @@ func (k *Key) BeforeCreate(tx *gorm.DB) error {
 
 // I'm not comfortable with this method of generating keys
 func (k *Key) GenerateKey() error {
-	k.Public = "public-" + time.Now().Format("20060102150405MonMSTJan") + string(uuid.New().NodeID())
-	k.Private = "private-" + time.Now().Format("20060102150405MSTJan") + string(uuid.New().NodeID())
+	k.Secret = "secret-" + time.Now().Format("20060102150405MonMSTJan") + "-" + k.AccountID
 	return nil
 }

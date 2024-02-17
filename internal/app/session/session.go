@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -50,6 +51,8 @@ func (s *Session) Create(ctx context.Context, accountID string, device entity.De
 
 func (s *Session) Verify(ctx context.Context, token string) (*entity.Session, error) {
 
+	token = strings.ReplaceAll(token, "Bearer ", "")
+
 	// extract account id from token
 	jwtClaims, err := extractClaims(token, s.config.GetString("JWT_SIGNING_KEY"))
 	if err != nil {
@@ -78,6 +81,9 @@ func (s *Session) Verify(ctx context.Context, token string) (*entity.Session, er
 }
 
 func extractClaims(token, signingKey string) (map[string]any, error) {
+
+	// parse token
+	token = strings.ReplaceAll(token, "Bearer ", "")
 	parsed, err := jwt.Parse(token, func(token *jwt.Token) (any, error) {
 		return []byte(signingKey), nil
 	})
@@ -100,13 +106,11 @@ func extractClaims(token, signingKey string) (map[string]any, error) {
 
 // Expire expires a session
 func (s *Session) Expire(ctx context.Context, token string) error {
-	var sess entity.Session
-	if err := s.db.Model(&sess).Where("token = ?", token).First(&sess).Error; err != nil {
-		s.logger.ErrorContext(ctx, "failed to find session %+v", err)
-		return err
+	var sess = entity.Session{
+		Token: token,
 	}
 	// delete session
-	if err := s.db.Model(&sess).Delete(&sess).Error; err != nil {
+	if err := s.db.Model(&sess).Where(sess).Delete(&sess).Error; err != nil {
 		s.logger.ErrorContext(ctx, "failed to delete session %+v", err)
 		return err
 	}
@@ -115,13 +119,11 @@ func (s *Session) Expire(ctx context.Context, token string) error {
 
 // Delete deletes all sessions for a given account
 func (s *Session) Delete(ctx context.Context, accountID string) error {
-	var sess entity.Session
-	if err := s.db.Model(&sess).Where("account_id = ?", accountID).First(&sess).Error; err != nil {
-		s.logger.ErrorContext(ctx, "failed to find session %+v", err)
-		return err
+	var sess = entity.Session{
+		AccountID: accountID,
 	}
 	// delete session
-	if err := s.db.Model(&sess).Delete(&sess).Error; err != nil {
+	if err := s.db.Model(&sess).Where(sess).Delete(&sess).Error; err != nil {
 		s.logger.ErrorContext(ctx, "failed to delete session %+v", err)
 		return err
 	}

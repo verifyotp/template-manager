@@ -13,7 +13,8 @@ type PostgresClient struct {
 func New(dsn string) (*PostgresClient, error) {
 	postgresConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		SkipDefaultTransaction: true,
-		Logger:                 logger.Default.LogMode(logger.Silent),
+		Logger:                 logger.Default,
+		TranslateError:         true,
 	})
 
 	if err != nil {

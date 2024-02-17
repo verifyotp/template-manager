@@ -1,9 +1,10 @@
 package shared
 
-import "time"
+import (
+	"template-manager/internal/entity"
+)
 
 type LoginResponse struct {
-	Email     string    `json:"email"`
-	Token     string    `json:"token"`
-	ExpiresAt time.Time `json:"expires_at"`
+	Account *entity.Account `json:"account"`
+	Session *entity.Session `json:"session"`
 }

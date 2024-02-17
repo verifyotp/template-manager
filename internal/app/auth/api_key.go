@@ -1,4 +1,4 @@
-package app
+package auth
 
 import (
 	"context"
@@ -25,12 +25,12 @@ func (a *App) CreateAccessKey(ctx context.Context, req shared.CreateAccessKeyReq
 	return nil
 }
 
-func (a *App) ListAccessKeys(ctx context.Context, req shared.ListAccessKeysRequest) ([]*entity.Key, error) {
+func (a *App) ListAccessKeys(ctx context.Context, req shared.ListAccessKeysRequest) ([]entity.Key, error) {
 	var (
-		keys []*entity.Key
+		keys []entity.Key
 		err  error
 	)
-	if keys, err = a.db.KeyRepository.Find(ctx, "id = ?", req.AccountID); err != nil {
+	if keys, err = a.db.KeyRepository.Find(ctx, "created_at IS NOT NULL"); err != nil {
 		return nil, errors.New("couldn't find matching keys: " + err.Error())
 	}
 	return keys, nil

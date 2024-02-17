@@ -9,8 +9,9 @@ import (
 
 	"template-manager/api/middleware"
 	"template-manager/api/rest"
-	"template-manager/internal/app"
+	"template-manager/internal/app/auth"
 	"template-manager/internal/app/session"
+	"template-manager/internal/app/template"
 	"template-manager/internal/entity"
 	"template-manager/pkg/config"
 	"template-manager/pkg/database"
@@ -50,12 +51,18 @@ func main() {
 		conf.GetString("MAILJET_DEFAULT_SENDER"),
 		mailjet.WithName("template manager"),
 	)
-	logger := slog.New(&slog.JSONHandler{})
+	logger := slog.Default()
 	sessionManager := session.New(db.Client, conf, logger)
 	midware := middleware.NewAuth(sessionManager)
 	repo := repository.NewRepositoryContainer(db)
-	application := app.New(conf, mj, logger, repo, sessionManager)
-	restApp := rest.New(conf, application, midware)
+	authApp := auth.New(conf, mj, logger, repo, sessionManager)
+	templateApp := template.New(conf, mj, logger, repo)
+	restApp := rest.New(
+		conf,
+		authApp,
+		templateApp,
+		midware,
+	)
 	log.Fatal(restApp.Listen(port))
 }
 
