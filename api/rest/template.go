@@ -6,6 +6,24 @@ import (
 	fiber "github.com/gofiber/fiber/v2"
 )
 
+func (s *server) GetUploadURL(c *fiber.Ctx) error {
+	var req shared.GetUploadURLRequest
+	if err := c.BodyParser(&req); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	if err := req.Validate(); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	uploadURL, err := s.templateApp.GetUploadURL(c.Context(), req)
+	if err != nil {
+		return HandleError(c, err)
+	}
+
+	return HandleSuccess(c, "upload url retrieved successfully", uploadURL)
+}
+
 func (s *server) AddTemplate(c *fiber.Ctx) error {
 	var req shared.CreateTemplateRequest
 	if err := c.BodyParser(&req); err != nil {

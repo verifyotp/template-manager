@@ -1,6 +1,8 @@
 package shared
 
 import (
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/mileusna/useragent"
@@ -63,6 +65,27 @@ func (d Device) Transform() entity.Device {
 		Browser:        ua.Name,
 		BrowserVersion: ua.Version,
 	}
+}
+
+type GetUploadURLRequest struct {
+	AccountID   string `json:"account_id"`
+	ContentType string `json:"content_type"`
+	Name        string `json:"name"`
+}
+
+func (r GetUploadURLRequest) Validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.AccountID, validation.Required),
+		validation.Field(&r.ContentType, validation.Required),
+		validation.Field(&r.Name, validation.Required),
+	)
+}
+
+type UploadURLResponse struct {
+	AccountID   string    `json:"account_id"`
+	ContentType string    `json:"content_type"`
+	URL         string    `json:"url"`
+	ExpireAt    time.Time `json:"expire_at"`
 }
 
 type CreateTemplateRequest struct {

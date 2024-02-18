@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"template-manager/internal/entity"
 	"template-manager/internal/shared"
@@ -25,6 +26,15 @@ func New(config *config.Config, logger *slog.Logger, db *repository.Container) *
 		db:     db,
 		logger: logger,
 	}
+}
+
+func (a *App) GetUploadURL(ctx context.Context, req shared.GetUploadURLRequest) (*shared.UploadURLResponse, error) {
+	return &shared.UploadURLResponse{
+		URL:         "https://s3.amazonaws.com/your-bucket-name/" + shared.GenerateSlug(req.Name),
+		ExpireAt:    time.Now().Add(time.Hour),
+		AccountID:   req.AccountID,
+		ContentType: req.ContentType,
+	}, nil
 }
 
 func (a *App) Create(ctx context.Context, req shared.CreateTemplateRequest) error {

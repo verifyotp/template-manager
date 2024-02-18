@@ -59,10 +59,12 @@ func (s server) Listen(port string) error {
 	api.Delete("/keys/:id", s.DeleteKey)
 
 	// Define API endpoints for managing templates
+	api.Post("/templates/upload-url", s.GetUploadURL)
 	api.Post("/templates", s.AddTemplate)
-	api.Get("/templates", s.GetTemplate)
+	api.Get("/templates/:id", s.GetTemplate)
+	api.Get("/templates", s.ListTemplates)
+	api.Put("/templates/:id", s.UpdateTemplate)
 	api.Delete("/templates/:id", s.DeleteTemplate)
-	api.Put("/templates/:id", s.DeleteTemplate)
 
 	// Start the server on port 8080
 	return app.Listen(port)
