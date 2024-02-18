@@ -85,3 +85,13 @@ func (a *Auth) FiberAuthMiddleware(c *fiber.Ctx) error {
 
 	return c.Next()
 }
+
+func (a *Auth) CorsMiddleware(c *fiber.Ctx) error {
+	//get the request origin
+	origin := c.Get("Origin")
+	//set the allowed origin
+	c.Set("Access-Control-Allow-Origin", origin)
+	c.Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE")
+	c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	return c.Next()
+}

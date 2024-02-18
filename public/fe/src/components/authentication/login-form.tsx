@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react"
+import { FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { cn } from "@/lib/utils"
@@ -15,22 +16,43 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [apiError, setApiError] = React.useState<string | null>(null);
   const router = useRouter(); // Initialize useRouter
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    setIsLoading(true)
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
 
-    setTimeout(() => {
-      setIsLoading(false)
-      // Navigate to the dashboard on successful login
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    console.log('Form Data:', formData);
+    console.log(email, password);
+
+    setIsLoading(true);
+    setApiError(null);
+
+    try {
+      await loginUser(email, password);
       router.push('/dashboard');
-    }, 30)
+    } catch (error) {
+      setApiError('An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   }
+
+  // alert error message
+  React.useEffect(() => {
+    if (apiError) {
+      alert(apiError);
+    }
+  setApiError(null);
+  }, [apiError]);
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="grid gap-3">
           <div className="grid gap-3">
             <Label className="sr-only" htmlFor="email">
@@ -96,3 +118,73 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     </div>
   )
 }
+
+
+export async function loginUser(email: string, password: string) : Promise<Response<LoginResponse>> {
+  const loginData = {
+    email,
+    password,
+  };
+
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(loginData)
+  };
+
+  try {
+    const response = await fetch('http://localhost:9000/api/user/login', requestOptions);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(errorMessage || 'Failed to login');
+    }
+
+    // Optionally handle response data here
+    const data = await response.json();
+
+    //check if the response is successful
+    if (!data.status) {
+      throw new Error(data.message);
+    }
+
+    // save token to local storage
+    localStorage.setItem('session', data.session);
+    localStorage.setItem('account', data.account);
+    return data;
+  } catch (error ) {
+    throw new Error(error as string || 'An error occurred');
+  } 
+}
+
+
+
+
+interface Session {
+  id: string;
+  account_id: string;
+  device: any; // Define the Device type if needed
+  token: string;
+  expires_at: string;
+  last_active: string;
+  created_at: string;
+}
+
+interface Account {
+  id: string;
+  email: string;
+  verified_at: string | null; // This can be a string or null
+  created_at: string;
+  updated_at: string | null; // This can be a string or null
+}
+
+interface LoginResponse {
+  account: Account;
+  session: Session;
+}
+
+interface Response<T = any> {
+  status: boolean;
+  message: string;
+  data?: T;
+}
+
