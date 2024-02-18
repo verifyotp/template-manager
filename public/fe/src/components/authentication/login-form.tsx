@@ -3,7 +3,6 @@
 import * as React from "react"
 import { FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { useFormState, useFormStatus } from "react-dom";
 
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
@@ -11,9 +10,11 @@ import { Button } from "@/registry/new-york/ui/button"
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/registry/new-york/ui/label"
 
+import { useToast } from "@/components/ui/use-toast"
 
 
-export async function loginUser(email: string, password: string) : Promise<Response<LoginResponse>> {
+
+export async function loginUser(email: string, password: string): Promise<Response<LoginResponse>> {
   const loginData = {
     email,
     password,
@@ -26,12 +27,7 @@ export async function loginUser(email: string, password: string) : Promise<Respo
   };
 
   try {
-    const response = await fetch(`${process.env.BACKEND_BASE_URL}/api/user/login`, requestOptions);
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(errorMessage || 'Failed to login');
-    }
-
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/login`, requestOptions);
     // Optionally handle response data here
     const data = await response.json();
 
@@ -43,13 +39,11 @@ export async function loginUser(email: string, password: string) : Promise<Respo
     // save token to local storage
     localStorage.setItem('session', data.session);
     localStorage.setItem('account', data.account);
-    return data;
-  } catch (error ) {
-    throw new Error(error as string || 'An error occurred');
-  } 
+    return data as Response<LoginResponse>;
+  } catch (error : any) {
+    throw new Error(error.message);
+  }
 }
-
-
 
 
 interface Session {
@@ -86,25 +80,32 @@ interface Response<T = any> {
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const router = useRouter(); // Initialize useRouter
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
-  const [submit, setSubmit] = React.useState<boolean>(false);
-
+  const { toast } = useToast()
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmit(true);
     setIsLoading(true);
-    
+
+
     loginUser(email, password)
       .then((data) => {
         setIsLoading(false);
+        toast({
+          title: "Success",
+          description: "You have successfully logged in",
+        })
         router.push('/dashboard');
       })
       .catch((error) => {
         setIsLoading(false);
-        alert(error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        })
       });
   };
 

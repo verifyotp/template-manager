@@ -1,8 +1,5 @@
 import { Metadata } from "next"
 import Link from "next/link"
-
-import { useRouter } from "next/router"; // Import useRouter from Next.js
-
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/registry/new-york/ui/button"
 import { UserLoginForm } from "@/components/authentication/login-form"
