@@ -3,10 +3,9 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/registry/new-york/ui/button"
-
 export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Authentication forms built using the components.",
+  title: "Template Manager",
+  description: "Manage your templates with ease",
 }
 
 export default function LandingPage() {
