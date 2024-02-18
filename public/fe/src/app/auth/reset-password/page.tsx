@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/registry/new-york/ui/button"
-import { UserResetPasswordForm } from "@/components/authentication/reset-password"
+import { UserResetPasswordForm } from "@/components/authentication/reset-password-form"
 
 export const metadata: Metadata = {
   title: "Reset Password",
@@ -27,10 +27,10 @@ export default function ResetPasswordPage() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-               Reset your password
+                Reset your password
               </h1>
               <p className="text-sm text-muted-foreground">
-               Enter your email below to reset your password
+                Enter your email below to reset your password
               </p>
             </div>
             <UserResetPasswordForm />

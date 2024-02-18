@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import * as React from "react"
+import { useRouter } from 'next/navigation'
 
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
@@ -8,10 +9,13 @@ import { Button } from "@/registry/new-york/ui/button"
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/registry/new-york/ui/label"
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function UserLoginForm({ className, ...props }: UserAuthFormProps) {
+
+interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+
+export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const router = useRouter(); // Initialize useRouter
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
@@ -19,7 +23,9 @@ export function UserLoginForm({ className, ...props }: UserAuthFormProps) {
 
     setTimeout(() => {
       setIsLoading(false)
-    }, 3000)
+      // Navigate to the dashboard on successful login
+      router.push('/dashboard');
+    }, 30)
   }
 
   return (
@@ -55,7 +61,7 @@ export function UserLoginForm({ className, ...props }: UserAuthFormProps) {
             />
           </div>
 
-          <Button disabled={isLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}

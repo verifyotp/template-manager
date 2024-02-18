@@ -10,7 +10,7 @@ import { Label } from "@/registry/new-york/ui/label"
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
-export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
+export function UserResetPasswordForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   async function onSubmit(event: React.SyntheticEvent) {
@@ -23,10 +23,10 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
   }
 
   return (
-    <div className={cn("grid gap-9", className)} {...props}>
+    <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-5">
-          <div className="grid gap-5">
+          <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
@@ -44,7 +44,7 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign Up
+            Reset Password
           </Button>
         </div>
       </form>
