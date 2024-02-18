@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/registry/new-york/ui/button"
-import { UserResetPasswordForm } from "@/components/authentication/reset-password-form"
+import { UserResetPasswordForm } from "@/components/auth/reset-password-form"
 
 export const metadata: Metadata = {
   title: "Reset Password",

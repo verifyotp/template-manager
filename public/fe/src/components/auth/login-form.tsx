@@ -12,8 +12,6 @@ import { Label } from "@/registry/new-york/ui/label"
 
 import { useToast } from "@/components/ui/use-toast"
 
-
-
 export async function loginUser(email: string, password: string): Promise<Response<LoginResponse>> {
   const loginData = {
     email,
@@ -89,13 +87,12 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     e.preventDefault();
     setIsLoading(true);
 
-
     loginUser(email, password)
       .then((data) => {
         setIsLoading(false);
         toast({
           title: "Success",
-          description: "You have successfully logged in",
+          description: data.message,
         })
         router.push('/dashboard');
       })
