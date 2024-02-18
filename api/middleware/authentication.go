@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"template-manager/internal/entity"
 )
@@ -87,11 +88,11 @@ func (a *Auth) FiberAuthMiddleware(c *fiber.Ctx) error {
 }
 
 func (a *Auth) CorsMiddleware(c *fiber.Ctx) error {
-	//get the request origin
 	origin := c.Get("Origin")
-	//set the allowed origin
-	c.Set("Access-Control-Allow-Origin", origin)
-	c.Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE")
-	c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	return c.Next()
+	return cors.New(cors.Config{
+		AllowHeaders:     "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin",
+		AllowOrigins:     origin,
+		AllowCredentials: true,
+		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
+	})(c)
 }

@@ -38,10 +38,8 @@ func New(
 func (s server) Listen(port string) error {
 	app := fiber.New()
 
-	app.Use(
-		s.middleware.FiberAuthMiddleware,
-		s.middleware.CorsMiddleware,
-	)
+	app.Use(s.middleware.CorsMiddleware)
+	app.Use(s.middleware.FiberAuthMiddleware)
 
 	// Setup route for the API health check
 	app.Get("/health", health)
