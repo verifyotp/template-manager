@@ -2,13 +2,14 @@ package template
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log/slog"
 
 	"template-manager/internal/entity"
 	"template-manager/internal/shared"
 	"template-manager/pkg/config"
 	"template-manager/pkg/repository"
+	"template-manager/pkg/repository/util"
 )
 
 type App struct {
@@ -26,77 +27,58 @@ func New(config *config.Config, logger *slog.Logger, db *repository.Container) *
 	}
 }
 
-func (a *App) Create(ctx context.Context, req shared.SignUpRequest) error {
-	var account = entity.Account{
-		Email: req.Email,
+func (a *App) Create(ctx context.Context, req shared.CreateTemplateRequest) error {
+	var template = entity.Template{
+		AccountID:   req.AccountID,
+		Name:        req.Name,
+		Slug:        shared.GenerateSlug(req.Name),
+		Version:     1,
+		ContentType: req.ContentType,
+		Location:    req.Location,
+		Vars:        req.Vars,
+		Active:      true,
 	}
+	return a.db.TemplateRepository.Create(ctx, &template)
+}
 
-	// generate password
-	randomPassword := entity.GenerateRandomPassword()
-	if err := account.SetPassword(randomPassword); err != nil {
-		a.logger.ErrorContext(ctx, "failed to set password %+v", err)
+func (a *App) Update(ctx context.Context, req shared.UpdateTemplateRequest) error {
+	existing, err := a.db.TemplateRepository.Get(ctx, "id = ? AND account_id = ?", req.TemplateID, req.AccountID)
+	if err != nil {
 		return err
 	}
+	newVersion := existing.Version + 1
+	return a.db.TemplateRepository.Create(ctx, &entity.Template{
+		AccountID:   req.AccountID,
+		Name:        fmt.Sprintf("%s-v%d", existing.Name, newVersion),
+		Slug:        existing.Slug,
+		Version:     newVersion,
+		ContentType: existing.ContentType,
+		Location:    req.Location,
+		Vars:        req.Vars,
+		Active:      existing.Active,
+	})
+}
 
-	// find existing account
-	if _, err := a.db.AuthRepository.Get(ctx, "email = ?", req.Email); err == nil {
-		return errors.New("account already exists")
-	}
-
-	if _, err := a.db.AuthRepository.Create(ctx, &account); err != nil {
+func (a *App) Delete(ctx context.Context, req shared.DeleteTemplateRequest) error {
+	if err := a.db.TemplateRepository.Delete(ctx, &entity.Template{
+		ID:        req.TemplateID,
+		AccountID: req.AccountID,
+		Version:   req.Version,
+	}); err != nil {
 		a.logger.ErrorContext(ctx, "failed to create account %+v", err)
 		return err
 	}
-
 	return nil
 }
 
-func (a *App) Update(ctx context.Context, req shared.SignUpRequest) error {
-	var account = entity.Account{
-		Email: req.Email,
-	}
-
-	// generate password
-	randomPassword := entity.GenerateRandomPassword()
-	if err := account.SetPassword(randomPassword); err != nil {
-		a.logger.ErrorContext(ctx, "failed to set password %+v", err)
-		return err
-	}
-
-	// find existing account
-	if _, err := a.db.AuthRepository.Get(ctx, "email = ?", req.Email); err == nil {
-		return errors.New("account already exists")
-	}
-
-	if _, err := a.db.AuthRepository.Create(ctx, &account); err != nil {
-		a.logger.ErrorContext(ctx, "failed to create account %+v", err)
-		return err
-	}
-
-	return nil
+func (a *App) Get(ctx context.Context, req shared.GetTemplateRequest) (*entity.Template, error) {
+	return a.db.TemplateRepository.Get(ctx, "id = ? AND account_id = ?", req.TemplateID, req.AccountID)
 }
 
-func (a *App) Delete(ctx context.Context, req shared.SignUpRequest) error {
-	var account = entity.Account{
-		Email: req.Email,
-	}
-
-	// generate password
-	randomPassword := entity.GenerateRandomPassword()
-	if err := account.SetPassword(randomPassword); err != nil {
-		a.logger.ErrorContext(ctx, "failed to set password %+v", err)
-		return err
-	}
-
-	// find existing account
-	if _, err := a.db.AuthRepository.Get(ctx, "email = ?", req.Email); err == nil {
-		return errors.New("account already exists")
-	}
-
-	if _, err := a.db.AuthRepository.Create(ctx, &account); err != nil {
-		a.logger.ErrorContext(ctx, "failed to create account %+v", err)
-		return err
-	}
-
-	return nil
+func (a *App) List(ctx context.Context, req shared.ListTemplatesRequest) (*util.PaginationT[[]entity.Template], error) {
+	return a.db.TemplateRepository.FindWithPagination(
+		ctx,
+		util.Eq("account_id", req.AccountID),
+		repository.WithPagination(req.Page, req.PageSize),
+	)
 }

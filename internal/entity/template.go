@@ -13,7 +13,7 @@ type Template struct {
 
 	Name        string `json:"name" gorm:"column:name;not null"`
 	Slug        string `json:"slug" gorm:"column:slug;not null"` // many templates can have the same slug but different versions
-	Version     string `json:"version" gorm:"column:version;not null;default:'1'"`
+	Version     uint64 `json:"version" gorm:"column:version;not null;default:1"`
 	Location    string `json:"location" gorm:"column:location;not null"` // location of the template [url link]
 	ContentType string `json:"content_type" gorm:"column:content_type;not null"`
 	Vars        Map    `json:"vars" gorm:"column:vars;type:jsonb;not null"` // pre-existing values are treated as default values

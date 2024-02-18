@@ -17,7 +17,7 @@ func (a *App) CreateAccessKey(ctx context.Context, req shared.CreateAccessKeyReq
 	if err := key.GenerateKey(); err != nil {
 		return err
 	}
-	if _, err := a.db.KeyRepository.Create(ctx, &key); err != nil {
+	if err := a.db.KeyRepository.Create(ctx, &key); err != nil {
 		a.logger.ErrorContext(ctx, "failed to create account %+v", err)
 		return err
 	}

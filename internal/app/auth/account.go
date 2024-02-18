@@ -58,7 +58,7 @@ func (a *App) Signup(ctx context.Context, req shared.SignUpRequest) error {
 		return errors.New("account already exists")
 	}
 
-	if _, err := a.db.AuthRepository.Create(ctx, &account); err != nil {
+	if err := a.db.AuthRepository.Create(ctx, &account); err != nil {
 		a.logger.ErrorContext(ctx, "failed to create account %+v", err)
 		return err
 	}
