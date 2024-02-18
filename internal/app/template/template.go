@@ -111,3 +111,11 @@ func (a *App) List(ctx context.Context, req shared.ListTemplatesRequest) (*util.
 		repository.WithPagination(req.Page, req.PageSize),
 	)
 }
+
+func (a *App) Import(ctx context.Context, req shared.ImportTemplateRequest) error {
+	return nil
+}
+
+func (a *App) Export(ctx context.Context, req shared.ExportTemplateRequest) error {
+	return nil
+}

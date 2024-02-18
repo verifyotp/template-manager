@@ -107,3 +107,35 @@ func (s *server) DeleteTemplate(c *fiber.Ctx) error {
 	}
 	return HandleSuccess(c, "template deleted successfully", nil)
 }
+
+func (s *server) ImportTemplate(c *fiber.Ctx) error {
+	var req shared.ImportTemplateRequest
+	if err := c.BodyParser(&req); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	if err := req.Validate(); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	if err := s.templateApp.Import(c.Context(), req); err != nil {
+		return HandleError(c, err)
+	}
+	return HandleSuccess(c, "template imported successfully", nil)
+}
+
+func (s *server) ExportTemplate(c *fiber.Ctx) error {
+	var req shared.ExportTemplateRequest
+	if err := c.BodyParser(&req); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	if err := req.Validate(); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	if err := s.templateApp.Export(c.Context(), req); err != nil {
+		return HandleError(c, err)
+	}
+	return HandleSuccess(c, "template exported successfully", nil)
+}

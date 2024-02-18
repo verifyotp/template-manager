@@ -159,3 +159,35 @@ func (r GetTemplateRequest) Validate() error {
 		validation.Field(&r.TemplateID, validation.Required),
 	)
 }
+
+type ImportTemplateRequest struct {
+	AccountID          string     `json:"account_id"`
+	Provider           string     `json:"provider"`
+	ProviderTemplateID string     `json:"provider_template_id"`
+	Credentials        entity.Map `json:"credentials"`
+}
+
+func (r ImportTemplateRequest) Validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.AccountID, validation.Required),
+		validation.Field(&r.Provider, validation.Required),
+		validation.Field(&r.ProviderTemplateID, validation.Required),
+		validation.Field(&r.Credentials, validation.Required),
+	)
+}
+
+type ExportTemplateRequest struct {
+	AccountID   string     `json:"account_id"`
+	TemplateID  string     `json:"template_id"`
+	Provider    string     `json:"provider"`
+	Credentials entity.Map `json:"credentials"`
+}
+
+func (r ExportTemplateRequest) Validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.AccountID, validation.Required),
+		validation.Field(&r.TemplateID, validation.Required),
+		validation.Field(&r.Provider, validation.Required),
+		validation.Field(&r.Credentials, validation.Required),
+	)
+}

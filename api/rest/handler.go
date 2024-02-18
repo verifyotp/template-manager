@@ -65,6 +65,8 @@ func (s server) Listen(port string) error {
 	api.Get("/templates", s.ListTemplates)
 	api.Put("/templates/:id", s.UpdateTemplate)
 	api.Delete("/templates/:id", s.DeleteTemplate)
+	api.Post("/templates/import", s.ImportTemplate)
+	api.Post("/templates/export", s.ExportTemplate)
 
 	// Start the server on port 8080
 	return app.Listen(port)
