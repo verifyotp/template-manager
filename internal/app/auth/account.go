@@ -6,9 +6,9 @@ import (
 	"log/slog"
 
 	"template-manager/internal/entity"
+	"template-manager/internal/pkg/email"
 	"template-manager/internal/shared"
 	"template-manager/pkg/config"
-	"template-manager/pkg/email"
 	"template-manager/pkg/repository"
 )
 

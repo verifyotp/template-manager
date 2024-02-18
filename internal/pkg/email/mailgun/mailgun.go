@@ -6,7 +6,7 @@ import (
 
 	mailgun "github.com/mailgun/mailgun-go/v3"
 
-	"template-manager/pkg/email"
+	"template-manager/internal/pkg/email"
 )
 
 type Mailgun struct {

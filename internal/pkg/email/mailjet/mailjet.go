@@ -8,7 +8,7 @@ import (
 
 	mailjet "github.com/mailjet/mailjet-apiv3-go/v4"
 
-	"template-manager/pkg/email"
+	"template-manager/internal/pkg/email"
 )
 
 type Mailjet struct {

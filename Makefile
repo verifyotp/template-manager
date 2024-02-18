@@ -1,5 +1,5 @@
 
-api:
+run:
 	go run cmd/main.go -port 9000
 
 fe:
@@ -7,4 +7,3 @@ fe:
 
 format:
 	goimports-reviser -rm-unused -use-cache -set-alias -format ./...
-	

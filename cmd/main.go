@@ -15,7 +15,7 @@ import (
 	"template-manager/internal/entity"
 	"template-manager/pkg/config"
 	"template-manager/pkg/database"
-	"template-manager/pkg/email/mailjet"
+	"template-manager/internal/pkg/email/mailjet"
 	"template-manager/pkg/repository"
 )
 
