@@ -41,7 +41,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.Client.AutoMigrate(&entity.Account{}, entity.Key{}, entity.Session{})
+	err = db.Client.AutoMigrate(
+		&entity.Account{},
+		&entity.Key{},
+		&entity.Session{},
+		&entity.Template{},
+		&entity.TemplateSync{},
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,7 +62,7 @@ func main() {
 	midware := middleware.NewAuth(sessionManager)
 	repo := repository.NewRepositoryContainer(db)
 	authApp := auth.New(conf, mj, logger, repo, sessionManager)
-	templateApp := template.New(conf, mj, logger, repo)
+	templateApp := template.New(conf, logger, repo)
 	restApp := rest.New(
 		conf,
 		authApp,
