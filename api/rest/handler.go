@@ -64,6 +64,7 @@ func (s server) Listen(port string) error {
 	api.Get("/templates/:id", s.GetTemplate)
 	api.Get("/templates", s.ListTemplates)
 	api.Put("/templates/:id", s.UpdateTemplate)
+	api.Put("/templates/edit/:id", s.UpdateTemplate)
 	api.Delete("/templates/:id", s.DeleteTemplate)
 	api.Post("/templates/import", s.ImportTemplate)
 	api.Post("/templates/export", s.ExportTemplate)

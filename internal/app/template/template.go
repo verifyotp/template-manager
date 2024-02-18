@@ -88,6 +88,14 @@ func (a *App) Update(ctx context.Context, req shared.UpdateTemplateRequest) erro
 	})
 }
 
+func (a *App) Edit(ctx context.Context, req shared.UpdateTemplateRequest) error {
+	return a.db.TemplateRepository.Update(ctx, &entity.Template{
+		AccountID: req.AccountID,
+		Location:  req.Location,
+		Vars:      req.Vars,
+	})
+}
+
 func (a *App) Delete(ctx context.Context, req shared.DeleteTemplateRequest) error {
 	if err := a.db.TemplateRepository.Delete(ctx, &entity.Template{
 		ID:        req.TemplateID,
