@@ -3,14 +3,14 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/registry/new-york/ui/button"
-import { UserSignupForm } from "@/components/authentication/signup-form"
+import { UserLoginForm } from "@/components/authentication/login-form"
 
 export const metadata: Metadata = {
   title: "Authentication",
   description: "Authentication forms built using the components.",
 }
 
-export default function SignUpPage() {
+export default function DashboardPage() {
   return (
     <>
       <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -21,7 +21,7 @@ export default function SignUpPage() {
             "absolute right-4 top-4 md:right-8 md:top-8"
           )}
         >
-          Login
+          Dashboard 
         </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
           <div className="absolute inset-0 bg-zinc-900" />
@@ -38,7 +38,7 @@ export default function SignUpPage() {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            Template Manager
+            Acme Inc
           </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
@@ -61,7 +61,7 @@ export default function SignUpPage() {
                 Enter your email below to create your account
               </p>
             </div>
-            <UserSignupForm />
+            <UserLoginForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
