@@ -26,7 +26,7 @@ export async function loginUser(email: string, password: string) : Promise<Respo
   };
 
   try {
-    const response = await fetch('http://localhost:9000/api/user/login', requestOptions);
+    const response = await fetch(`${process.env.BACKEND_BASE_URL}/api/user/login`, requestOptions);
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(errorMessage || 'Failed to login');
