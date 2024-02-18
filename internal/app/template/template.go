@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"template-manager/internal/entity"
@@ -11,9 +12,11 @@ import (
 	"template-manager/pkg/config"
 	"template-manager/pkg/repository"
 	"template-manager/pkg/repository/util"
+	"template-manager/pkg/uploader/s3"
 )
 
 type App struct {
+	env    string
 	config *config.Config
 	logger *slog.Logger
 	db     *repository.Container // TODO: replace with repository
@@ -29,9 +32,25 @@ func New(config *config.Config, logger *slog.Logger, db *repository.Container) *
 }
 
 func (a *App) GetUploadURL(ctx context.Context, req shared.GetUploadURLRequest) (*shared.UploadURLResponse, error) {
+
+	env := strings.ToLower(a.env)
+	//upload to s3 e.g /template/production/<account_id>
+	s3Folder := fmt.Sprintf("/template/%s/%s", env, req.AccountID)
+	s3, err := s3.NewS3("template-manager-service", "us-east-1", "text/html", s3Folder)
+	if err != nil {
+		a.logger.ErrorContext(ctx, "failed to create s3 client %+v", err)
+		return nil, err
+	}
+
+	preSigned, err := s3.UploadPresignedURL(ctx, shared.GenerateSlug(req.Name), time.Hour/6) // 10 minutes
+	if err != nil {
+		a.logger.ErrorContext(ctx, "failed to create presigned url %+v", err)
+		return nil, err
+	}
+
 	return &shared.UploadURLResponse{
-		URL:         "https://s3.amazonaws.com/your-bucket-name/" + shared.GenerateSlug(req.Name),
-		ExpireAt:    time.Now().Add(time.Hour),
+		URL:         preSigned,
+		ExpireAt:    time.Now().Add(time.Hour / 6),
 		AccountID:   req.AccountID,
 		ContentType: req.ContentType,
 	}, nil

@@ -72,7 +72,7 @@ func (s server) Listen(port string) error {
 
 func health(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
-		"message": "pong",
+		"message": "unicorns are running free! 🦄",
 	})
 }
 
