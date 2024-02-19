@@ -45,52 +45,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 
-const data: ApiKey[] = [
-  {
-    id: "m5gr84yyi9",
-    name: "INV001",
-    secret: "$250.00",
-    created_at: "2021-10-10",
-  },
-  {
-    id: "m5gr8d4i9",
-    name: "INV002",
-    secret: "$150.00",
-    created_at: "2021-10-11",
-  },
-  {
-    id: "m5gr8fa4i9",
-    name: "INV003",
-    secret: "$350.00",
-    created_at: "2021-10-12",
-  },
-  {
-    id: "m5gr84fdi9",
-    name: "INV004",
-    secret: "$450.00",
-    created_at: "2021-10-13",
-  },
-  {
-    id: "m5gr842324i9",
-    name: "INV005",
-    secret: "$550.00",
-    created_at: "2021-10-14",
-  },
-  {
-    id: "m5gr84lmkamei9",
-    name: "INV006",
-    secret: "$200.00",
-    created_at: "2021-10-15",
-  },
-  {
-    id: "m5gr000084i9",
-    name: "INV007",
-    secret: "$300.00",
-    created_at: "2021-10-16",
-  },
-]
 
 
 export type ApiKey = {
@@ -211,9 +173,9 @@ export function ApiKeyTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -284,7 +246,15 @@ export function ApiKeySheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Manage API Keys</Button>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="outline">Manage API Keys</Button>
+            </TooltipTrigger>
+            <TooltipContent>view, create & delete api keys </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </SheetTrigger>
       <SheetContent className="w-[500px] sm:w-[640px]">
         <SheetHeader>
@@ -303,7 +273,13 @@ export function ApiKeySheet() {
         </div>
         <SheetFooter>
           <SheetClose asChild>
-            <Button type="submit">Create</Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger><Button type="submit">Create</Button>
+                </TooltipTrigger>
+                <TooltipContent> create a new api key</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </SheetClose>
         </SheetFooter>
         <div className="py-6">
@@ -313,3 +289,50 @@ export function ApiKeySheet() {
     </Sheet>
   )
 }
+
+
+
+const data: ApiKey[] = [
+  {
+    id: "m5gr84yyi9",
+    name: "INV001",
+    secret: "$250.00",
+    created_at: "2021-10-10",
+  },
+  {
+    id: "m5gr8d4i9",
+    name: "INV002",
+    secret: "$150.00",
+    created_at: "2021-10-11",
+  },
+  {
+    id: "m5gr8fa4i9",
+    name: "INV003",
+    secret: "$350.00",
+    created_at: "2021-10-12",
+  },
+  {
+    id: "m5gr84fdi9",
+    name: "INV004",
+    secret: "$450.00",
+    created_at: "2021-10-13",
+  },
+  {
+    id: "m5gr842324i9",
+    name: "INV005",
+    secret: "$550.00",
+    created_at: "2021-10-14",
+  },
+  {
+    id: "m5gr84lmkamei9",
+    name: "INV006",
+    secret: "$200.00",
+    created_at: "2021-10-15",
+  },
+  {
+    id: "m5gr000084i9",
+    name: "INV007",
+    secret: "$300.00",
+    created_at: "2021-10-16",
+  },
+]
