@@ -30,14 +30,11 @@ export function ApiKeySheet() {
       const authToken = localStorage.getItem('authToken') as string;
       if (!authToken) {
         toast({
-          
           title: "Error",
           description: "You are not authorized to view this page.",
         })
         router.push('/auth/login');
       }
-
-
       const response = await fetchApiList(authToken as string)
       setData(response.data as ApiKey[])
     } catch (error: any) {

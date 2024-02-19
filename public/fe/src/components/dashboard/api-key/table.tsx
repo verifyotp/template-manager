@@ -53,15 +53,6 @@ interface AlertProps {
 
 
 export function AlertDialogDeleteApiKey({ Trigger, OnDelete }: AlertProps) {
-
-  const [answer, setAnswer] = React.useState<string | null>(null)
-
-  React.useEffect(() => {
-    if (answer === "yes") {
-      OnDelete()
-    }
-  }, [answer])
-
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -77,13 +68,10 @@ export function AlertDialogDeleteApiKey({ Trigger, OnDelete }: AlertProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            onClick={() => {
-              setAnswer("no")
-            }}
           >Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              setAnswer("yes")
+              OnDelete()
             }}
           >Continue</AlertDialogAction>
         </AlertDialogFooter>
@@ -131,24 +119,16 @@ function getColumns({ OnDelete }: getColumnProps): ColumnDef<ApiKey>[] {
       header: () => <div className=" password">Secret</div>,
       cell: ({ row }) => {
         const secret = row.getValue("secret") as string
-        const [hiddenSecret, setHiddenSecret] = React.useState<boolean>(false)
-        function handleSecret() {
-          setHiddenSecret(!hiddenSecret)
-        }
-        const maskSecret = (secret: string) => { // mask the secret [only display the first 5 and last 5 characters]
-          if (secret.length < 10) return secret
-          return secret.slice(0, 7) + "*****" + secret.slice(-5)
-        }
 
+        const [hiddenSecret, setHiddenSecret] = React.useState<boolean>(false)
         const [clicked, setClicked] = React.useState<boolean>(false)
-        const copySecret = () => navigator.clipboard.writeText(secret as string)
-        function handleCopy() {
-          setClicked(true)
-          copySecret()
-          setTimeout(() => {
-            setClicked(false)
-          }, 500)
-        }
+
+        const copySecret = () => navigator.clipboard.writeText(secret as string);
+        const maskSecret = (secret: string) => (secret.length < 10) ? secret : secret.slice(0, 7) + "*****" + secret.slice(-5);
+
+        const handleSecret = () => setHiddenSecret(!hiddenSecret)
+        const handleCopy = () => { setClicked(true); copySecret(); setTimeout(() => { setClicked(false) }, 500) }
+
 
         return <div className="font-medium flex items-center justify-center space-x-2 gap-2">
           <div >
@@ -164,7 +144,7 @@ function getColumns({ OnDelete }: getColumnProps): ColumnDef<ApiKey>[] {
           <div className="">
             <button onClick={handleCopy}>
               <FaRegCopy
-                className={`opacity-[0.6] hover:opacity-[1] ${clicked ? "text-[13px] duration-[0.4s]" : "text-[15px] duration-[0.4s]"}`}
+                className={`opacity-[0.6] hover:opacity-[1] ${clicked ? "text-[13px]-duration-[0.4s]" : "text-[15px]-duration-[0.4s]"}`}
               />
             </button>
           </div>
