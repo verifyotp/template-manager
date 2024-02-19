@@ -13,9 +13,9 @@ import (
 	"template-manager/internal/app/session"
 	"template-manager/internal/app/template"
 	"template-manager/internal/entity"
+	"template-manager/internal/pkg/email/mailjet"
 	"template-manager/pkg/config"
 	"template-manager/pkg/database"
-	"template-manager/internal/pkg/email/mailjet"
 	"template-manager/pkg/repository"
 )
 
