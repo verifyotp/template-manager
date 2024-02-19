@@ -4,6 +4,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { ViewTemplate } from "@/components/dashboard/template/view"
 import { UploadTemplate } from "@/components/dashboard/template/upload"
+import { ApiKeySheet } from "./api-key/sheet";
 
 interface ViewProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -20,6 +21,10 @@ export function Dashboard({ className, ...props }: ViewProps) {
           {/* Upload template button */}
           <div>
             <UploadTemplate />
+          </div>
+          {/* Create API Key */}
+          <div>
+          <ApiKeySheet />
           </div>
         </div>
       </div>
