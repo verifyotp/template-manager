@@ -15,7 +15,7 @@ type App struct {
 	AuthApp     *auth.App
 }
 
-func NewApp(conf *config.Config, mails email.Provider, logger *slog.Logger, repo *repository.Container, sessionManager *session.Session) *App {
+func NewApp(conf *config.Config, mails email.Provider, logger *slog.Logger, repo repository.Container, sessionManager *session.Session) *App {
 	return &App{
 		TemplateApp: template.New(conf, logger, repo),
 		AuthApp:     auth.New(conf, mails, logger, repo, sessionManager),
