@@ -15,6 +15,7 @@ require (
 	github.com/mailjet/mailjet-apiv3-go/v4 v4.0.1
 	github.com/mileusna/useragent v1.3.4
 	github.com/shopspring/decimal v1.3.1
+	github.com/stripe/stripe-go/v76 v76.17.0
 	golang.org/x/crypto v0.16.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.5

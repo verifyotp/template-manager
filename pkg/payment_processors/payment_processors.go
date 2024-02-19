@@ -9,4 +9,5 @@ func (p *Processors) GetRegistry(key string) ProcessorProvider {
 }
 
 type ProcessorProvider interface {
+	CreateSubscription()
 }
