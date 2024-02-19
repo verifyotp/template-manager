@@ -10,6 +10,7 @@ import (
 
 type Middleware interface {
 	FiberAuthMiddleware(c *fiber.Ctx) error
+	CorsMiddleware(c *fiber.Ctx) error
 }
 
 type server struct {
@@ -37,9 +38,8 @@ func New(
 func (s server) Listen(port string) error {
 	app := fiber.New()
 
-	app.Use(
-		s.middleware.FiberAuthMiddleware,
-	)
+	app.Use(s.middleware.CorsMiddleware)
+	app.Use(s.middleware.FiberAuthMiddleware)
 
 	// Setup route for the API health check
 	app.Get("/health", health)

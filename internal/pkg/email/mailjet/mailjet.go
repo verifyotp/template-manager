@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	mailjet "github.com/mailjet/mailjet-apiv3-go/v4"
 
@@ -91,7 +90,7 @@ func sendTemplateEmail(ctx context.Context, mailjetClient *mailjet.Client, templ
 	messages := mailjet.MessagesV31{Info: messagesInfo}
 	res, err := mailjetClient.SendMailV31(&messages)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	fmt.Printf("Data: %+v\n", res)
 	return nil

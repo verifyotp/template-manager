@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import * as React from "react"
+import { useRouter } from 'next/navigation'
 
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
@@ -8,10 +9,13 @@ import { Button } from "@/registry/new-york/ui/button"
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/registry/new-york/ui/label"
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+import { buttonVariants } from "@/registry/new-york/ui/button"
 
-export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
+interface ViewProps extends React.HTMLAttributes<HTMLDivElement>{}
+
+export function ViewTemplate({ className, ...props }: ViewProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const router = useRouter(); // Initialize useRouter
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
@@ -19,33 +23,32 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
 
     setTimeout(() => {
       setIsLoading(false)
-    }, 3000)
+      // Navigate to the dashboard on successful login
+      router.push('/dashboard');
+    }, 30)
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
-        <div className="grid gap-2">
-          <div className="grid gap-1">
+        <div className="grid gap-3">
+          <div className="grid gap-3">
             <Label className="sr-only" htmlFor="email">
-              Email
+              Dashboard
             </Label>
-            <Input
-              id="email"
-              placeholder="name@example.com"
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-          </div>
-          <Button disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign Up
-          </Button>
+           </div>
+
+           <div className="mb-4">
+          <h2 className="text-lg font-semibold mb-2">Email Templates</h2>
+          {/* Replace with logic to display email templates */}
+          <ul>
+            <li>Template 1</li>
+            <li>Template 2</li>
+            {/* Add more templates as needed */}
+          </ul>
+        </div>
+
+
         </div>
       </form>
       <div className="relative">
@@ -56,3 +59,4 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
     </div>
   )
 }
+
