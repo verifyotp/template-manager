@@ -34,6 +34,11 @@ type repository[T any] struct {
 }
 
 func NewRepository[T any](db *gorm.DB) *repository[T] {
+	var model T
+	err := db.AutoMigrate(model)
+	if err != nil {
+		return nil
+	}
 	return &repository[T]{db: db}
 }
 

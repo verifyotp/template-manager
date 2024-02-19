@@ -11,7 +11,6 @@ import (
 	"template-manager/api/middleware"
 	"template-manager/api/rest"
 	"template-manager/internal/app/session"
-	"template-manager/internal/entity"
 	"template-manager/internal/pkg/email/mailjet"
 	"template-manager/pkg/config"
 	"template-manager/pkg/database"
@@ -40,16 +39,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.Client.AutoMigrate(
-		&entity.Account{},
-		&entity.Key{},
-		&entity.Session{},
-		&entity.Template{},
-		&entity.TemplateSync{},
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	// TODO: migrated this to repository.NewRepository()
+	//err = db.Client.AutoMigrate(
+	//	&entity.Account{},
+	//	&entity.Key{},
+	//	&entity.Session{},
+	//	&entity.Template{},
+	//	&entity.TemplateSync{},
+	//)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 	mj := mailjet.New(
 		conf.GetString("MAILJET_PUBLIC_KEY"),
 		conf.GetString("MAILJET_PRIVATE_KEY"),
