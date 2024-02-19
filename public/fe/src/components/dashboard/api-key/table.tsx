@@ -117,7 +117,7 @@ function getColumns({ OnDelete }: getColumnProps): ColumnDef<ApiKey>[] {
     {
       accessorKey: "secret",
       header: () => <div className=" password">Secret</div>,
-      cell: ({ row }) => {
+      cell: function Cell ({ row }) {
         const secret = row.getValue("secret") as string
 
         const [hiddenSecret, setHiddenSecret] = React.useState<boolean>(false)
