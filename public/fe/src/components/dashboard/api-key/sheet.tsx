@@ -39,8 +39,6 @@ export function ApiKeySheet() {
 
 
       const response = await fetchApiList(authToken as string)
-      console.log("called")
-      console.log(response.data)
       setData(response.data as ApiKey[])
     } catch (error: any) {
       toast({
@@ -49,7 +47,6 @@ export function ApiKeySheet() {
         description: error.message,
       })
     }
-
   }
 
   React.useEffect(() => {
@@ -76,7 +73,29 @@ export function ApiKeySheet() {
           description: error.message,
         })
       });
+  }
 
+
+  const handleDelete = (id: string) => {
+    const authToken = localStorage.getItem('authToken') as string;
+    if (!authToken) {
+      router.push('/auth/login');
+    }
+    deleteApiKey(id, authToken)
+      .then((data) => {
+        toast({
+          title: "Success",
+          description: data.message,
+        })
+        handleFetchApiList()
+      })
+      .catch((error) => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        })
+      });
   }
 
   return (
@@ -117,7 +136,7 @@ export function ApiKeySheet() {
           </div>
         </SheetFooter>
         <div className="py-6">
-          <ApiKeyTable data={data} />
+          <ApiKeyTable data={data} onDelete={handleDelete} />
         </div>
       </SheetContent>
     </Sheet>
@@ -186,3 +205,28 @@ export async function fetchApiList(authToken: string): Promise<Response<ApiKey[]
 }
 
 
+
+export async function deleteApiKey(id: string, authToken: string): Promise<Response> {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}`
+    },
+  };
+
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/keys/${id}`, requestOptions);
+    // Optionally handle response data here
+    const data = await response.json();
+
+    //check if the response is successful
+    if (!data.status) {
+      throw new Error(data.message);
+    }
+
+    return data as Response;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
