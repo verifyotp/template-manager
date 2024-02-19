@@ -6,12 +6,11 @@ import (
 	"log/slog"
 	"os"
 	"strings"
+	"template-manager/internal/app"
 
 	"template-manager/api/middleware"
 	"template-manager/api/rest"
-	"template-manager/internal/app/auth"
 	"template-manager/internal/app/session"
-	"template-manager/internal/app/template"
 	"template-manager/internal/entity"
 	"template-manager/internal/pkg/email/mailjet"
 	"template-manager/pkg/config"
@@ -61,12 +60,13 @@ func main() {
 	sessionManager := session.New(db.Client, conf, logger)
 	midware := middleware.NewAuth(sessionManager)
 	repo := repository.NewRepositoryContainer(db)
-	authApp := auth.New(conf, mj, logger, repo, sessionManager)
-	templateApp := template.New(conf, logger, repo)
+
+	apps := app.NewApp(conf, mj, logger, repo, sessionManager)
+
 	restApp := rest.New(
 		conf,
-		authApp,
-		templateApp,
+		apps.AuthApp,
+		apps.TemplateApp,
 		midware,
 	)
 	log.Fatal(restApp.Listen(port))

@@ -2,7 +2,6 @@ package rest
 
 import (
 	fiber "github.com/gofiber/fiber/v2"
-
 	"template-manager/internal/app/auth"
 	"template-manager/internal/app/template"
 	"template-manager/pkg/config"

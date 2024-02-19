@@ -10,19 +10,22 @@ import (
 	"template-manager/internal/pkg/email"
 )
 
-type Mailjet struct {
-	from       string
-	fromName   string
-	mj         *mailjet.Client
-	publicKey  string
-	privateKey string
+type (
+	Mailjet struct {
+		from       string
+		fromName   string
+		mj         *mailjet.Client
+		publicKey  string
+		privateKey string
+	}
+	Option func(m *Mailjet)
+)
+
+var templateIDMap = map[email.TemplateID]int{
+	email.TemplateIDSignupVerification: 5456918,
 }
 
-var _ email.Provider = (*Mailjet)(nil)
-
-type Option func(m *Mailjet)
-
-// Set the company name that will appear in the email
+// WithName is an option which sets the company name that will appear in the email
 func WithName(name string) Option {
 	return func(m *Mailjet) {
 		m.fromName = name
@@ -41,10 +44,6 @@ func New(publicKey, privateKey, from string, opts ...Option) *Mailjet {
 		opt(client)
 	}
 	return client
-}
-
-var templateIDMap = map[email.TemplateID]int{
-	email.TemplateIDSignupVerification: 5456918,
 }
 
 func (m *Mailjet) Send(ctx context.Context, id email.TemplateID, vars map[string]any) error {
@@ -95,3 +94,5 @@ func sendTemplateEmail(ctx context.Context, mailjetClient *mailjet.Client, templ
 	fmt.Printf("Data: %+v\n", res)
 	return nil
 }
+
+var _ email.Provider = (*Mailjet)(nil)
