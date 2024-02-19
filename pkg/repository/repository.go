@@ -54,7 +54,7 @@ func (r *repository[T]) Find(ctx context.Context, conds ...interface{}) ([]T, er
 		dest []T
 	)
 
-	if err := r.db.WithContext(ctx).Find(&dest, conds...).Error; err != nil {
+	if err := r.db.WithContext(ctx).Order("created_at desc").Find(&dest, conds...).Error; err != nil {
 		return nil, err
 	}
 	return dest, nil

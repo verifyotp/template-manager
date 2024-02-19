@@ -12,68 +12,6 @@ import { Label } from "@/registry/new-york/ui/label"
 
 import { useToast } from "@/components/ui/use-toast"
 
-export async function loginUser(email: string, password: string): Promise<Response<LoginResponse>> {
-  const loginData = {
-    email,
-    password,
-  };
-
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(loginData)
-  };
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/login`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-
-    // save token to local storage
-    localStorage.setItem('session', data.session);
-    localStorage.setItem('account', data.account);
-    return data as Response<LoginResponse>;
-  } catch (error : any) {
-    throw new Error(error.message);
-  }
-}
-
-
-interface Session {
-  id: string;
-  account_id: string;
-  device: any; // Define the Device type if needed
-  token: string;
-  expires_at: string;
-  last_active: string;
-  created_at: string;
-}
-
-interface Account {
-  id: string;
-  email: string;
-  verified_at: string | null; // This can be a string or null
-  created_at: string;
-  updated_at: string | null; // This can be a string or null
-}
-
-interface LoginResponse {
-  account: Account;
-  session: Session;
-}
-
-interface Response<T = any> {
-  status: boolean;
-  message: string;
-  data?: T;
-}
-
-
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -94,6 +32,11 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
           title: "Success",
           description: data.message,
         })
+
+        // save token to local storage
+        localStorage.setItem('session', JSON.stringify(data.data?.session));
+        localStorage.setItem('account', JSON.stringify(data.data?.account));
+        localStorage.setItem('authToken', data.data?.session.token as string) ;
         router.push('/dashboard');
       })
       .catch((error) => {
@@ -181,5 +124,60 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   )
 }
 
+export async function loginUser(email: string, password: string): Promise<Response<LoginResponse>> {
+  const loginData = {
+    email,
+    password,
+  };
 
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(loginData)
+  };
+
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/login`, requestOptions);
+    // Optionally handle response data here
+    const data = await response.json();
+
+    //check if the response is successful
+    if (!data.status) {
+      throw new Error(data.message);
+    }
+    return data as Response<LoginResponse>;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+
+interface Session {
+  id: string;
+  account_id: string;
+  device: any; // Define the Device type if needed
+  token: string;
+  expires_at: string;
+  last_active: string;
+  created_at: string;
+}
+
+interface Account {
+  id: string;
+  email: string;
+  verified_at: string | null; // This can be a string or null
+  created_at: string;
+  updated_at: string | null; // This can be a string or null
+}
+
+interface LoginResponse {
+  account: Account;
+  session: Session;
+}
+
+interface Response<T = any> {
+  status: boolean;
+  message: string;
+  data?: T;
+}
 

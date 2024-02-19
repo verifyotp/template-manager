@@ -19,11 +19,11 @@ type App struct {
 	env    string
 	config *config.Config
 	logger *slog.Logger
-	db     *repository.Container // TODO: replace with repository
+	db     repository.Container // TODO: replace with repository
 
 }
 
-func New(config *config.Config, logger *slog.Logger, db *repository.Container) *App {
+func New(config *config.Config, logger *slog.Logger, db repository.Container) *App {
 	return &App{
 		config: config,
 		db:     db,

@@ -47,7 +47,7 @@ type ListAccessKeysRequest struct {
 
 type CreateAccessKeyRequest struct {
 	AccountID     string `json:"account_id"`
-	AccessKeyName string `json:"access_key_name"`
+	AccessKeyName string `json:"name"`
 }
 
 type Device struct {

@@ -11,8 +11,8 @@ type Container struct {
 	TemplateRepository TemplateRepositoryInterface[entity.Template]
 }
 
-func NewRepositoryContainer(db *database.PostgresClient) *Container {
-	return &Container{
+func NewRepositoryContainer(db *database.PostgresClient) Container {
+	return Container{
 		AuthRepository:     NewRepository[entity.Account](db.Client.Table(entity.Account{}.TableName())),
 		KeyRepository:      NewRepository[entity.Key](db.Client.Table(entity.Key{}.TableName())),
 		TemplateRepository: NewRepository[entity.Template](db.Client.Table(entity.Template{}.TableName())),
