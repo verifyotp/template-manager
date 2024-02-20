@@ -25,7 +25,7 @@ export async function signUpRequest(email: string,): Promise<Response> {
   };
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/reset-password`, requestOptions);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/signup`, requestOptions);
     // Optionally handle response data here
     const data = await response.json();
 
@@ -67,7 +67,7 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
         })
         
         setTimeout(() => {
-          router.push('/auth/signup');
+          router.push('/auth/login');
         }, 3000)
       })
       .catch((error) => {
