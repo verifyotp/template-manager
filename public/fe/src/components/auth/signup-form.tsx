@@ -67,7 +67,7 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
         })
         
         setTimeout(() => {
-          router.push('/auth/login');
+          router.push('/auth/signup');
         }, 3000)
       })
       .catch((error) => {
