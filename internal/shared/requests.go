@@ -135,9 +135,9 @@ func (r DeleteTemplateRequest) Validate() error {
 }
 
 type ListTemplatesRequest struct {
-	AccountID string `json:"account_id"`
-	Page      int    `json:"page"`
-	PageSize  int    `json:"page_size"`
+	AccountID string 
+	Page      int    
+	PageSize  int    
 }
 
 func (r ListTemplatesRequest) Validate() error {

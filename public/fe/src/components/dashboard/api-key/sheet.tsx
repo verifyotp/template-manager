@@ -1,5 +1,5 @@
 'use client';
-import { Button } from "@/registry/new-york/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -18,7 +18,11 @@ import { useToast } from "@/components/ui/use-toast"
 import { ApiKey } from "@/components/dashboard/api-key/table"
 
 
-export function ApiKeySheet() {
+interface ApiKeySheetProps {
+  children: React.ReactNode;
+}
+
+export function ApiKeySheet({children}: ApiKeySheetProps) {
 
   const [name, setName] = React.useState<string>("");
   const [data, setData] = React.useState<ApiKey[]>([]);
@@ -98,11 +102,11 @@ export function ApiKeySheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Manage API Keys</Button>
+        {children}
       </SheetTrigger>
       <SheetContent className="w-[100%] sm:max-w-[80%] md:max-w-[50%]">
         <SheetHeader>
-          <SheetTitle>API Keys Setting</SheetTitle>
+          <SheetTitle>Api Keys</SheetTitle>
           <SheetDescription>
             Manage your API keys.
           </SheetDescription>

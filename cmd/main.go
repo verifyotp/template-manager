@@ -7,7 +7,8 @@ import (
 	"os"
 	"strings"
 	"template-manager/internal/app"
-	"template-manager/internal/entity"
+
+	// "template-manager/internal/entity"
 
 	"template-manager/api/middleware"
 	"template-manager/api/rest"
@@ -42,16 +43,16 @@ func main() {
 	}
 
 	// TODO: migrated this to repository.NewRepository()
-	err = db.Client.AutoMigrate(
-		&entity.Account{},
-		&entity.Key{},
-		&entity.Session{},
-		&entity.Template{},
-		&entity.TemplateSync{},
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = db.Client.AutoMigrate(
+	// 	&entity.Account{},
+	// 	&entity.Key{},
+	// 	&entity.Session{},
+	// 	&entity.Template{},
+	// 	&entity.TemplateSync{},
+	// )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	mj := mailjet.New(
 		conf.GetString("MAILJET_PUBLIC_KEY"),
 		conf.GetString("MAILJET_PRIVATE_KEY"),

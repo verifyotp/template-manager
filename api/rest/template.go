@@ -30,6 +30,7 @@ func (s *server) AddTemplate(c *fiber.Ctx) error {
 		return HandleBadRequest(c, err)
 	}
 
+	req.AccountID = c.Locals("account_id").(string)
 	if err := req.Validate(); err != nil {
 		return HandleBadRequest(c, err)
 	}
@@ -41,9 +42,10 @@ func (s *server) AddTemplate(c *fiber.Ctx) error {
 }
 
 func (s *server) GetTemplate(c *fiber.Ctx) error {
-	var req shared.GetTemplateRequest
-	if err := c.BodyParser(&req); err != nil {
-		return HandleBadRequest(c, err)
+
+	var req = shared.GetTemplateRequest{
+		AccountID:  c.Locals("account_id").(string),
+		TemplateID: c.Params("id"),
 	}
 
 	if err := req.Validate(); err != nil {
@@ -59,9 +61,10 @@ func (s *server) GetTemplate(c *fiber.Ctx) error {
 }
 
 func (s *server) ListTemplates(c *fiber.Ctx) error {
-	var req shared.ListTemplatesRequest
-	if err := c.BodyParser(&req); err != nil {
-		return HandleBadRequest(c, err)
+	var req = shared.ListTemplatesRequest{
+		AccountID: c.Locals("account_id").(string),
+		Page:      c.QueryInt("page", 1),
+		PageSize:  c.QueryInt("page_size", 10),
 	}
 
 	if err := req.Validate(); err != nil {
@@ -81,6 +84,8 @@ func (s *server) UpdateTemplate(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return HandleBadRequest(c, err)
 	}
+	req.AccountID = c.Locals("account_id").(string)
+	req.TemplateID = c.Params("id")
 
 	if err := req.Validate(); err != nil {
 		return HandleBadRequest(c, err)
@@ -92,11 +97,32 @@ func (s *server) UpdateTemplate(c *fiber.Ctx) error {
 	return HandleSuccess(c, "template updated successfully", nil)
 }
 
+func (s *server) EditTemplate(c *fiber.Ctx) error {
+	var req shared.UpdateTemplateRequest
+	if err := c.BodyParser(&req); err != nil {
+		return HandleBadRequest(c, err)
+	}
+	req.AccountID = c.Locals("account_id").(string)
+	req.TemplateID = c.Params("id")
+
+	if err := req.Validate(); err != nil {
+		return HandleBadRequest(c, err)
+	}
+
+	if err := s.templateApp.Edit(c.Context(), req); err != nil {
+		return HandleError(c, err)
+	}
+	return HandleSuccess(c, "template updated successfully", nil)
+}
+
 func (s *server) DeleteTemplate(c *fiber.Ctx) error {
 	var req shared.DeleteTemplateRequest
 	if err := c.BodyParser(&req); err != nil {
 		return HandleBadRequest(c, err)
 	}
+
+	req.AccountID = c.Locals("account_id").(string)
+	req.TemplateID = c.Params("id")
 
 	if err := req.Validate(); err != nil {
 		return HandleBadRequest(c, err)
@@ -113,6 +139,7 @@ func (s *server) ImportTemplate(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return HandleBadRequest(c, err)
 	}
+	req.AccountID = c.Locals("account_id").(string)
 
 	if err := req.Validate(); err != nil {
 		return HandleBadRequest(c, err)
@@ -129,6 +156,7 @@ func (s *server) ExportTemplate(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return HandleBadRequest(c, err)
 	}
+	req.AccountID = c.Locals("account_id").(string)
 
 	if err := req.Validate(); err != nil {
 		return HandleBadRequest(c, err)

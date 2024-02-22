@@ -56,7 +56,7 @@ func (s *Session) Verify(ctx context.Context, token string) (*entity.Session, er
 	// extract account id from token
 	jwtClaims, err := extractClaims(token, s.config.GetString("JWT_SIGNING_KEY"))
 	if err != nil {
-		s.logger.ErrorContext(ctx, "failed to extract claims %+v", err)
+		s.logger.ErrorContext(ctx, "failed to extract claims %v", err.Error(), "err")
 		return nil, err
 	}
 
@@ -64,14 +64,14 @@ func (s *Session) Verify(ctx context.Context, token string) (*entity.Session, er
 	if err := s.db.Model(&sess).
 		Where("token = ? AND account_id = ?", token, jwtClaims["account_id"]).
 		First(&sess).Error; err != nil {
-		s.logger.ErrorContext(ctx, "failed to find session %+v", err)
+		s.logger.ErrorContext(ctx, "failed to find session %s", err.Error(), "err")
 		return nil, err
 	}
 	// check if session is expired
 	if sess.ExpiresAt.Before(time.Now()) {
 		// delete session
 		if err := s.db.Model(&sess).Delete(&sess).Error; err != nil {
-			s.logger.ErrorContext(ctx, "failed to delete session %+v", err)
+			s.logger.ErrorContext(ctx, "failed to delete session %s", err.Error(), "err")
 			return nil, err
 		}
 		return nil, errors.New("session expired")

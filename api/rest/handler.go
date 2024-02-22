@@ -1,10 +1,11 @@
 package rest
 
 import (
-	fiber "github.com/gofiber/fiber/v2"
 	"template-manager/internal/app/auth"
 	"template-manager/internal/app/template"
 	"template-manager/pkg/config"
+
+	fiber "github.com/gofiber/fiber/v2"
 )
 
 type Middleware interface {
@@ -60,10 +61,10 @@ func (s server) Listen(port string) error {
 	// Define API endpoints for managing templates
 	api.Post("/templates/upload-url", s.GetUploadURL)
 	api.Post("/templates", s.AddTemplate)
-	api.Get("/templates/:id", s.GetTemplate)
 	api.Get("/templates", s.ListTemplates)
+	api.Get("/templates/:id", s.GetTemplate)
 	api.Put("/templates/:id", s.UpdateTemplate)
-	api.Put("/templates/edit/:id", s.UpdateTemplate)
+	api.Put("/templates/edit/:id", s.EditTemplate)
 	api.Delete("/templates/:id", s.DeleteTemplate)
 	api.Post("/templates/import", s.ImportTemplate)
 	api.Post("/templates/export", s.ExportTemplate)

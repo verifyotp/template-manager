@@ -6,6 +6,10 @@ import { SidebarNavItem } from "@/types/nav"
 
 import { cn } from "@/lib/utils"
 
+
+import * as React from "react"
+
+
 export interface DocsSidebarNavProps {
   items: SidebarNavItem[]
 }
@@ -14,10 +18,10 @@ export function DocsSidebarNav({ items }: DocsSidebarNavProps) {
   const pathname = usePathname()
 
   return items.length ? (
-    <div className="w-full">
+    <div className="w-full p-[10px] max-w-[200px]">
       {items.map((item, index) => (
         <div key={index} className={cn("pb-4")}>
-          <h4 className="mb-1 rounded-md px-2 py-1 text-sm font-semibold">
+          <h4 className="mb-1 rounded-md px-2 py-2 text-sm font-semibold">
             {item.title}
           </h4>
           {item?.items?.length && (
@@ -28,6 +32,8 @@ export function DocsSidebarNav({ items }: DocsSidebarNavProps) {
     </div>
   ) : null
 }
+
+
 
 interface DocsSidebarNavItemsProps {
   items: SidebarNavItem[]
