@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/sheet"
 import * as React from "react"
 import { useRouter } from 'next/navigation'
-import { ApiKeyTable } from "@/components/dashboard/api-key/table"
+import { ApiKeyTable } from "@/components/settings/api-key/table"
 import { useToast } from "@/components/ui/use-toast"
-import { ApiKey } from "@/components/dashboard/api-key/table"
+import { ApiKey } from "@/components/settings/api-key/table"
 
 
 interface ApiKeySheetProps {

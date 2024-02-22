@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
-import { ApiKeySheet } from "@/components/dashboard/api-key/sheet"
+import { ApiKeySheet } from "@/components/settings/api-key/sheet"
 
 export function MainNav({
   className,
