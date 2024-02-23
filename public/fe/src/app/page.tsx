@@ -10,20 +10,27 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="container h-screen flex justify-center items-center relative">
-
-      {/* Second component */}
-      <div className="max-w-lg p-8 bg-white rounded-lg shadow-lg absolute top-1/2 transform -translate-y-1/2">
-        <h1 className="text-3xl font-semibold mb-4">Template Manager</h1>
-        <p className="text-lg text-gray-600 mb-6">Please login to access your account.</p>
+    <div className="container h-screen bg-white flex flex-col justify-center items-center">
+      <h1 className="text-5xl font-bold mb-4">Template Manager</h1>
+      <p className="text-xl text-gray-700 mb-8">Create and manage your templates for email, sms, push and more.</p>
+      <div className="flex space-x-4">
         <Link
           href="/auth/signup"
           className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "block w-full text-center py-3 px-4 rounded-md shadow-md"
+            buttonVariants({ variant: "default" }),
+            "py-3 px-4 rounded-md shadow-md text-white"
           )}
         >
-          Sign Up
+          Get Started
+        </Link>
+        <Link
+          href="/auth/login"
+          className={cn(
+            buttonVariants({ variant: "secondary" }),
+            "py-3 px-4 rounded-md shadow-md text-gray-800"
+          )}
+        >
+          Login
         </Link>
       </div>
     </div>
