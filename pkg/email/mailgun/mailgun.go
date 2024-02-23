@@ -2,71 +2,126 @@ package mailgun
 
 import (
 	"context"
-	"errors"
+	"template-manager/pkg/email"
 
+	jsoniter "github.com/json-iterator/go"
 	mailgun "github.com/mailgun/mailgun-go/v3"
-
-	"template-manager/internal/pkg/email"
 )
 
 type Mailgun struct {
-	from    string
-	mg      *mailgun.MailgunImpl
-	domain  string
-	apiKeys string
+	marshaler jsoniter.API
+	ctx       context.Context
 }
 
-var _ email.Provider = (*Mailgun)(nil)
-
-func New(domain, apiKeys, from string) *Mailgun {
-	mg := mailgun.NewMailgun(domain, apiKeys)
+func New(ctx context.Context) *Mailgun {
 	return &Mailgun{
-		from:    from,
-		mg:      mg,
-		domain:  domain,
-		apiKeys: apiKeys,
+		ctx:       ctx,
+		marshaler: jsoniter.Config{TagKey: "mailgun"}.Froze(),
 	}
 }
 
-var templateIDMap = map[email.TemplateID]string{
-	email.TemplateIDSignupVerification: "signup_verification",
+func (m *Mailgun) initMailgunClient(input *email.AuthCredential) (*mailgun.MailgunImpl, error) {
+	if err := m.validateCredential(input); err != nil {
+		return nil, err
+	}
+	return mailgun.NewMailgun(input.Domain, input.PrivateKey), nil
 }
 
-func (m *Mailgun) Send(ctx context.Context, id email.TemplateID, vars map[string]any) error {
-	if err := validateVars(vars); err != nil {
-		return err
+func (m *Mailgun) validateCredential(input *email.AuthCredential) error {
+	if input.Domain == "" {
+		return email.ErrDomainRequired
 	}
-	to := vars["to"].(string)
-	subject := vars["subject"].(string)
-	return sendTemplateEmail(ctx, m.mg, templateIDMap[id], m.from, to, subject, vars)
-}
-
-func validateVars(vars map[string]any) error {
-	if _, ok := vars["to"]; !ok {
-		return errors.New("missing to")
-	}
-	if _, ok := vars["subject"]; !ok {
-		return errors.New("missing subject")
+	if input.PrivateKey == "" {
+		return email.ErrPrivateKeyRequired
 	}
 	return nil
 }
 
-func sendTemplateEmail(ctx context.Context, mg *mailgun.MailgunImpl, templateID string, from, to, subject string, variables map[string]any) error {
-	message := mg.NewMessage(
-		from,
-		subject,
-		"",
-		to,
-	)
-	message.SetTemplate(templateID)
-	if err := message.AddRecipient(to); err != nil {
+func (m *Mailgun) GetTemplates(input *email.TemplateQuery) (*email.TemplateResponse, error) {
+	client, err := m.initMailgunClient(&input.AuthCredential)
+	if err != nil {
+		return nil, err
+	}
+	var data []mailgun.Template
+	result := client.ListTemplates(&mailgun.ListTemplateOptions{})
+	hasNext := result.Next(m.ctx, &data)
+	marshaledData, err := m.marshaler.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	response := &email.TemplateResponse{
+		HasNext: hasNext,
+	}
+	if err := m.marshaler.Unmarshal(marshaledData, &response.DataList); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (m *Mailgun) GetTemplate(input *email.TemplateQuery) (*email.TemplateResponse, error) {
+	client, err := m.initMailgunClient(&input.AuthCredential)
+	if err != nil {
+		return nil, err
+	}
+	tmpl, err := client.GetTemplate(m.ctx, input.Name)
+	if err != nil {
+		return nil, err
+	}
+	marshaledData, err := m.marshaler.Marshal(tmpl)
+	if err != nil {
+		return nil, err
+	}
+	response := &email.TemplateResponse{}
+	if err := m.marshaler.Unmarshal(marshaledData, &response.Data); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (m *Mailgun) AddTemplate(input *email.TemplateInput) (*email.TemplateResponse, error) {
+	client, err := m.initMailgunClient(&input.AuthCredential)
+	if err != nil {
+		return nil, err
+	}
+	version := mailgun.TemplateVersion{
+		Active:   true,
+		Tag:      input.Tag,
+		Template: input.Template,
+		Comment:  input.Comment,
+	}
+	tmpl := &mailgun.Template{
+		Name:        input.Name,
+		Description: input.Description,
+		Version:     version,
+	}
+	if err := client.CreateTemplate(m.ctx, tmpl); err != nil {
+		return nil, err
+	}
+	return &email.TemplateResponse{}, nil
+}
+
+func (m *Mailgun) UpdateTemplate(input *email.TemplateInput) (*email.TemplateResponse, error) {
+	client, err := m.initMailgunClient(&input.AuthCredential)
+	if err != nil {
+		return nil, err
+	}
+	tmpl := &mailgun.Template{}
+	if input.Name != "" {
+		tmpl.Name = input.Name
+	}
+	if input.Description != "" {
+		tmpl.Description = input.Description
+	}
+	if err := client.UpdateTemplate(m.ctx, tmpl); err != nil {
+		return nil, err
+	}
+	return &email.TemplateResponse{}, nil
+}
+
+func (m *Mailgun) DeleteTemplate(input *email.TemplateQuery) error {
+	client, err := m.initMailgunClient(&input.AuthCredential)
+	if err != nil {
 		return err
 	}
-	for key, value := range variables {
-		if err := message.AddTemplateVariable(key, value); err != nil {
-			return err
-		}
-	}
-	_, _, err := mg.Send(ctx, message)
-	return err
+	return client.DeleteTemplate(m.ctx, input.Name)
 }
