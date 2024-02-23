@@ -3,8 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import React, { useEffect, useRef } from "react";
-import Scroll from "@/app/_components/scroll";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Template Manager",
