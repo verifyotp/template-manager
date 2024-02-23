@@ -18,7 +18,7 @@ export default function NotFound() {
                     "py-3 px-4 rounded-md shadow-md text-white"
                 )}
             >
-                Home Page
+                Back
             </Link>
             </div>
         </div>
