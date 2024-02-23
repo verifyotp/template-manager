@@ -1,16 +1,27 @@
-import { Metadata } from "next"
-import Link from "next/link"
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { Metadata } from "next";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import React, { useEffect, useRef } from "react";
+import Scroll from "@/app/_components/scroll";
+
 export const metadata: Metadata = {
   title: "Template Manager",
   description: "Manage your templates with ease",
-}
+};
+
+const FeatureCard = ({ children }: React.PropsWithChildren<{}>) => (
+  <div className="p-4 bg-gray-50 rounded-lg shadow-md mb-4">
+    {children}
+  </div>
+);
 
 export default function LandingPage() {
   return (
-    <div className="container h-screen bg-white flex flex-col justify-center items-center">
+    <div className="container h-screen bg-white flex flex-col justify-center items-center relative">
+      {/* Animated scrollable text */}
+      {/* <Scroll /> */}
       <h1 className="text-5xl font-bold mb-4">Template Manager</h1>
       <p className="text-xl text-gray-700 mb-8">Create and manage your templates for email, sms, push and more.</p>
       <div className="flex space-x-4">
@@ -34,5 +45,5 @@ export default function LandingPage() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
