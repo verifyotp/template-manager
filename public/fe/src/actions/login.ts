@@ -2,16 +2,20 @@
 
 import {
     LoginResponse 
-} from '@/schemas/auth';
+} from '@/types/auth';
 
 import {
     Response,
-} from '@/schemas';
+} from '@/types';
 
-export async function login(email: string, password: string): Promise<Response<LoginResponse>> {
+export async function login({email, password}: {
+  email: string;
+  password: string;
+}): Promise<Response<LoginResponse>> {
+
     const loginData = {
       email,
-      password,
+      password, 
     };
   
     const requestOptions = {
@@ -24,11 +28,6 @@ export async function login(email: string, password: string): Promise<Response<L
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/login`, requestOptions);
       // Optionally handle response data here
       const data = await response.json();
-  
-      //check if the response is successful
-      if (!data.status) {
-        throw new Error(data.message);
-      }
       return data as Response<LoginResponse>;
     } catch (error: any) {
       throw new Error(error?.message);

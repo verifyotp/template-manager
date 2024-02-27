@@ -2,7 +2,7 @@
 
 import {
   Response,
-} from '@/schemas';
+} from '@/types';
 
 
 export async function initiatePasswordReset(email: string,): Promise<Response> {

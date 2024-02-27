@@ -1,7 +1,7 @@
 
 
 import { ApiKey } from "@/types/api-key";
-import { Response } from "@/schemas";
+import { Response } from "@/types";
 
 export async function createApiKey(name: string, authToken: string): Promise<Response> {
     const createApiKeyData = {

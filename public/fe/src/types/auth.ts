@@ -20,3 +20,10 @@ export interface LoginResponse {
     account: Account;
     session: Session;
 }
+
+
+import * as zod from 'zod';
+export type LoginSchema = {
+    email: zod.StringValidation;
+    password: string;
+}
