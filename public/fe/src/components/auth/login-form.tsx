@@ -1,9 +1,8 @@
 "use client";
 
 import * as React from "react"
-import { FormEvent, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -73,7 +72,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   };
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-5", className)} {...props}>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -89,7 +88,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="john.doe@example.com"
+                      placeholder="name@example.com"
                       type="email"
                     />
                   </FormControl>

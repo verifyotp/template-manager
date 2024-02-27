@@ -14,7 +14,7 @@ export default function LoginPage() {
   return (
     <>
       <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-1 lg:px-0">
-        <Link
+        {/* <Link
           href="/auth/signup"
           className={cn(
             buttonVariants({ variant: "ghost" }),
@@ -22,7 +22,7 @@ export default function LoginPage() {
           )}
         >
           Sign Up
-        </Link>
+        </Link> */}
         <div className="lg:p-auto">
           <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
