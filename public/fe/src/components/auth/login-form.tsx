@@ -9,25 +9,26 @@ import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/registry/new-york/ui/label"
-
+import { login } from "@/actions/login"
 import { useToast } from "@/components/ui/use-toast"
+import { useTransition } from "react";
 
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const router = useRouter(); // Initialize useRouter
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast()
+  
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    loginUser(email, password)
+    startTransition(() => {
+    login(email, password)
       .then((data) => {
-        setIsLoading(false);
         toast({
           title: "Success",
           description: data.message,
@@ -40,13 +41,13 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
         router.push('/dashboard');
       })
       .catch((error) => {
-        setIsLoading(false);
         toast({
           variant: "destructive",
           title: "Error",
           description: error.message,
         })
       });
+    });
   };
 
   return (
@@ -66,7 +67,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
               autoCorrect="off"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
+              disabled={isPending}
               required={true}
             />
           </div>
@@ -82,14 +83,14 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
               autoComplete="password"
               autoCorrect="off"
               value={password}
-              disabled={isLoading}
+              disabled={isPending}
               onChange={(e) => setPassword(e.target.value)}
               required={true}
             />
           </div>
 
-          <Button type="submit" disabled={isLoading}>
-            {isLoading && (
+          <Button type="submit" disabled={isPending}>
+            {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Login
@@ -123,61 +124,3 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     </div>
   )
 }
-
-export async function loginUser(email: string, password: string): Promise<Response<LoginResponse>> {
-  const loginData = {
-    email,
-    password,
-  };
-
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(loginData)
-  };
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/login`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-    return data as Response<LoginResponse>;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-}
-
-
-interface Session {
-  id: string;
-  account_id: string;
-  device: any; // Define the Device type if needed
-  token: string;
-  expires_at: string;
-  last_active: string;
-  created_at: string;
-}
-
-interface Account {
-  id: string;
-  email: string;
-  verified_at: string | null; // This can be a string or null
-  created_at: string;
-  updated_at: string | null; // This can be a string or null
-}
-
-interface LoginResponse {
-  account: Account;
-  session: Session;
-}
-
-interface Response<T = any> {
-  status: boolean;
-  message: string;
-  data?: T;
-}
-

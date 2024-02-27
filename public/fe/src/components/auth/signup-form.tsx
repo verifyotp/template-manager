@@ -1,82 +1,46 @@
 "use client";
 
 import * as React from "react"
-
+import { useTransition } from "react";
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/registry/new-york/ui/label"
-
+import { signUpRequest as signUp } from "@/actions/signup"
 import { useRouter } from 'next/navigation'
 import { useToast } from "@/components/ui/use-toast"
 
 
-export async function signUpRequest(email: string,): Promise<Response> {
-  const requestData = {
-    email,
-  };
-
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestData)
-  };
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/signup`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-    return data as Response;
-  } catch (error : any) {
-    throw new Error(error.message);
-  }
-}
-
-interface Response<T = any> {
-  status: boolean;
-  message: string;
-  data?: T;
-}
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const { toast } = useToast()
+    
   const router = useRouter(); // Initialize useRouter
   const [email, setEmail] = React.useState<string>("");
-
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast()
   
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
-    setIsLoading(true)
-
-    signUpRequest(email)
-      .then((data) => {
-        setIsLoading(false);
-        toast({
-          title: "Success",
-          description: data.message,
-        })
-        
-        setTimeout(() => {
+    startTransition(() => {
+      signUp(email)
+        .then((data) => {
+          toast({
+            title: "Success",
+            description: data.message,
+          })
           router.push('/auth/login');
-        }, 3000)
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message,
         })
-      });
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.message,
+          })
+        });
+    });
   }
 
   return (
@@ -94,13 +58,13 @@ export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              disabled={isLoading}
+              disabled={isPending}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <Button disabled={isLoading}>
-            {isLoading && (
+          <Button disabled={isPending}>
+            {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Sign Up
