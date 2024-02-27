@@ -70,15 +70,6 @@ export function ResetForm({ className, ...props }: UserAuthFormProps) {
 
   return (
     <div className="container relative h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-1 lg:px-0">
-      <Link
-        href="/auth/login"
-        className={cn(
-          buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-8 md:top-8"
-        )}
-      >
-        Login
-      </Link>
       <div className="lg:p-auto">
         <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
@@ -128,6 +119,13 @@ export function ResetForm({ className, ...props }: UserAuthFormProps) {
                 <span className="w-full border-t" />
               </div>
             </div>
+            <div className="flex items-center justify-center">
+              <Button variant="link" >
+                <a href="/auth/login" className="font-small p-2 text-primary opacity-[0.60] hover:opacity-[1.0]">
+                  Back to login
+                </a>
+              </Button>
+          </div>
           </div>
         </div>
       </div>
