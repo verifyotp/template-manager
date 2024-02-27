@@ -27,9 +27,9 @@ import {
 } from "@/components/ui/form";
 
 
-interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
-export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
+export function LoginForm({ className, ...props }: LoginFormProps) {
   const router = useRouter(); // Initialize useRouter
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");

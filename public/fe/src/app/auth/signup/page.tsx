@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { UserSignupForm } from "@/components/auth/signup-form"
+import { SignupForm } from "@/components/auth/signup-form"
 
 export const metadata: Metadata = {
   title: "Sign Up",
@@ -33,7 +33,7 @@ export default function SignUpPage() {
                 Enter your email below to create your account
               </p>
             </div>
-            <UserSignupForm />
+            <SignupForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link

@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { UserLoginForm } from "@/components/auth/login-form"
+import { LoginForm } from "@/components/auth/login-form"
 
 export const metadata: Metadata = {
   title: "Login",
@@ -33,7 +33,7 @@ export default function LoginPage() {
                 Enter your email below to create your account
               </p>
             </div>
-            <UserLoginForm />
+            <LoginForm />
           </div>
         </div>
       </div>

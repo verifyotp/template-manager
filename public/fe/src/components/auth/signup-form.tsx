@@ -25,9 +25,9 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface SignupFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
-export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
+export function SignupForm({ className, ...props }: SignupFormProps) {
 
   const router = useRouter(); // Initialize useRouter
   const [isPending, startTransition] = useTransition();
