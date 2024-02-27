@@ -1,6 +1,6 @@
 'use client';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/registry/new-york/ui/input"
+import { Input } from "@/components/ui/new-york/input"
 import { FaRegCopy } from "react-icons/fa6";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { MdOutlineDelete } from "react-icons/md";
@@ -44,6 +44,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { ApiKey } from "@/types/api-key";
 
 
 interface AlertProps {
@@ -173,13 +174,6 @@ function getColumns({ OnDelete }: getColumnProps): ColumnDef<ApiKey>[] {
       },
     },
   ]
-}
-
-export type ApiKey = {
-  id: string
-  name: string
-  secret: string
-  created_at: string
 }
 
 interface ApiKeyTableProps {

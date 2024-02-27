@@ -2,7 +2,7 @@
 
 import {
     Response,
-} from '@/schemas/auth';
+} from '@/schemas';
 
 
 export async function signUpRequest(email: string,): Promise<Response> {

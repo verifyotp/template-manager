@@ -1,6 +1,3 @@
-
-
-
 export interface Session {
     id: string;
     account_id: string;
@@ -23,10 +20,3 @@ export interface LoginResponse {
     account: Account;
     session: Session;
 }
-
-export interface Response<T = any> {
-    status: boolean;
-    message: string;
-    data?: T;
-}
-

@@ -1,8 +1,8 @@
 'use server';
 
 import {
-    Response,
-} from '@/schemas/auth';
+  Response,
+} from '@/schemas';
 
 
 export async function initiatePasswordReset(email: string,): Promise<Response> {

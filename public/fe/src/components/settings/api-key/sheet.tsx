@@ -1,6 +1,6 @@
 'use client';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/registry/new-york/ui/input"
+import { Input } from "@/components/ui/new-york/input"
 import { Label } from "@/components/ui/label"
 import {
   Sheet,
@@ -15,7 +15,8 @@ import * as React from "react"
 import { useRouter } from 'next/navigation'
 import { ApiKeyTable } from "@/components/settings/api-key/table"
 import { useToast } from "@/components/ui/use-toast"
-import { ApiKey } from "@/components/settings/api-key/table"
+import { createApiKey, deleteApiKey, fetchApiList } from "@/actions/api-key"
+import { ApiKey } from "@/types/api-key"
 
 
 interface ApiKeySheetProps {
@@ -142,92 +143,4 @@ export function ApiKeySheet({children}: ApiKeySheetProps) {
       </SheetContent>
     </Sheet>
   )
-}
-
-interface Response<T = any> {
-  status: boolean;
-  message: string;
-  data?: T;
-}
-
-export async function createApiKey(name: string, authToken: string): Promise<Response> {
-  const createApiKeyData = {
-    name
-  }
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authToken}`
-    },
-    body: JSON.stringify(createApiKeyData)
-  };
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/keys`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-
-    return data as Response;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-}
-
-
-export async function fetchApiList(authToken: string): Promise<Response<ApiKey[]>> {
-  const requestOptions = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authToken}`
-    },
-  };
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/keys`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-
-    return data as Response<ApiKey[]>;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-}
-
-
-
-export async function deleteApiKey(id: string, authToken: string): Promise<Response> {
-  const requestOptions = {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authToken}`
-    },
-  };
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/keys/${id}`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-
-    return data as Response;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
 }

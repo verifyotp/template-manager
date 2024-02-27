@@ -5,8 +5,8 @@ import { useTransition } from "react";
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/new-york/input"
-import { Label } from "@/components/ui/new-york/label"
+import { Input } from "@/registry/new-york/ui/input"
+import { Label } from "@/registry/new-york/ui/label"
 import { signUpRequest as signUp } from "@/actions/signup"
 import { useRouter } from 'next/navigation'
 import { useToast } from "@/components/ui/use-toast"

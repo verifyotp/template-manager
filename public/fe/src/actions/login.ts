@@ -1,9 +1,12 @@
 'use server';
 
 import {
-    Response,
     LoginResponse 
 } from '@/schemas/auth';
+
+import {
+    Response,
+} from '@/schemas';
 
 export async function login(email: string, password: string): Promise<Response<LoginResponse>> {
     const loginData = {
