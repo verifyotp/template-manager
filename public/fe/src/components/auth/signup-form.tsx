@@ -32,14 +32,14 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  
+
   const form = useForm<z.infer<typeof SignupSchema>>({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
       email: "",
     },
   });
-  
+
 
   const onSubmit = (values: z.infer<typeof SignupSchema>) => {
     setError("");
