@@ -138,9 +138,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               </div>
 
               <div className="text-sm">
-                <a href="/auth/reset-password" className="font-medium text-primary">
+                <Button variant="link" >
+                <a href="/auth/reset" className="font-medium text-primary">
                   Forgot your password ?
                 </a>
+                </Button>
               </div>
             </div>
           </div>
