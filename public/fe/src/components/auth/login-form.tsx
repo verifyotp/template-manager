@@ -164,7 +164,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             <div className="flex items-center justify-center">
               <Button variant="link" >
                 <a href="/auth/signup" className="font-small p-2 text-primary opacity-[0.60] hover:opacity-[1.0]">
-                  Don't have an account? Sign Up
+                  Don&apost have an account? Sign Up
                 </a>
               </Button>
           </div>
