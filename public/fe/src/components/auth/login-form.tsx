@@ -23,7 +23,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,  
+  FormMessage,
 } from "@/components/ui/form";
 
 
@@ -62,7 +62,10 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             form.reset();
             setSuccess(data.message);
             localStorage.setItem('authToken', data.data?.session.token as string);
-            router.push('/dashboard');
+            // wait for the token to be set
+            setTimeout(() => {
+              router.push('/dashboard');
+            }, 750);
           }
         })
         .catch(() => setError("Something went wrong"));
@@ -104,7 +107,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                     <FormControl>
                       <Input
                         {...field}
-                        {...field}
                         disabled={isPending}
                         placeholder="******"
                         type="password"
@@ -139,9 +141,9 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
               <div className="text-sm">
                 <Button variant="link" >
-                <a href="/auth/reset" className="font-medium text-primary">
-                  Forgot your password ?
-                </a>
+                  <a href="/auth/reset" className="font-medium text-primary">
+                    Forgot your password ?
+                  </a>
                 </Button>
               </div>
             </div>
