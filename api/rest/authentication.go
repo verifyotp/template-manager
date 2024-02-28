@@ -68,7 +68,7 @@ func (s *server) Logout(c *fiber.Ctx) error {
 	err := c.BodyParser(&request)
 	if err != nil {
 		return HandleBadRequest(c, err)
-	}
+	} 
 
 	request.Token = strings.ReplaceAll(request.Token, "Bearer ", "")
 	err = s.authApp.Logout(c.Context(), request)

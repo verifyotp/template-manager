@@ -50,8 +50,8 @@ func (s server) Listen(port string) error {
 	// Define API endpoints for managing users
 	api.Post("/users/signup", s.Signup)
 	api.Post("/users/login", s.Login)
-	api.Post("/users/reset-password", s.InitiateResetPassword)
 	api.Post("/users/logout", s.Logout)
+	api.Post("/users/reset-password", s.InitiateResetPassword)
 
 	// Define API endpoints for managing keys
 	api.Post("/keys", s.AddKey)
