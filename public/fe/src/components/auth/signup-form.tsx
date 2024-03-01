@@ -98,8 +98,12 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
                       </FormItem>
                     )}
                   />
-                  <FormError message={error} />
-                  <FormSuccess message={success} />
+                  {
+                    error && <FormError message={error} />
+                  }
+                  {
+                    success && <FormSuccess message={success} />
+                  }
                   <Button disabled={isPending}>
                     {isPending && (
                       <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
