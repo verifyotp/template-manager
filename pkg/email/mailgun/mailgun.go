@@ -8,6 +8,11 @@ import (
 	mailgun "github.com/mailgun/mailgun-go/v3"
 )
 
+const (
+	TemplateEngineHandlebars = mailgun.TemplateEngineHandlebars
+	TemplateEngineGo         = mailgun.TemplateEngineGo
+)
+
 type Mailgun struct {
 	marshaler jsoniter.API
 	ctx       context.Context
@@ -88,6 +93,7 @@ func (m *Mailgun) AddTemplate(input *email.TemplateInput) (*email.TemplateRespon
 		Tag:      input.Tag,
 		Template: input.Template,
 		Comment:  input.Comment,
+		Engine:   getTemplateEngine(input.Engine),
 	}
 	tmpl := &mailgun.Template{
 		Name:        input.Name,
@@ -100,17 +106,25 @@ func (m *Mailgun) AddTemplate(input *email.TemplateInput) (*email.TemplateRespon
 	return &email.TemplateResponse{}, nil
 }
 
+func getTemplateEngine(engine string) mailgun.TemplateEngine {
+	switch engine {
+	case "handlebars":
+		return mailgun.TemplateEngineHandlebars
+	case "go":
+		return mailgun.TemplateEngineGo
+	default:
+		return mailgun.TemplateEngineHandlebars
+	}
+}
+
 func (m *Mailgun) UpdateTemplate(input *email.TemplateInput) (*email.TemplateResponse, error) {
 	client, err := m.initMailgunClient(&input.AuthCredential)
 	if err != nil {
 		return nil, err
 	}
-	tmpl := &mailgun.Template{}
-	if input.Name != "" {
-		tmpl.Name = input.Name
-	}
-	if input.Description != "" {
-		tmpl.Description = input.Description
+	tmpl := &mailgun.Template{
+		Name:        input.Name,
+		Description: input.Description,
 	}
 	if err := client.UpdateTemplate(m.ctx, tmpl); err != nil {
 		return nil, err
