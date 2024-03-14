@@ -12,6 +12,7 @@ import (
 
 	"template-manager/api/middleware"
 	"template-manager/api/rest"
+	"template-manager/internal/app/credential"
 	"template-manager/internal/app/session"
 	"template-manager/internal/pkg/email/mailjet"
 	"template-manager/pkg/config"
@@ -63,6 +64,7 @@ func main() {
 	sessionManager := session.New(db.Client, conf, logger)
 	midware := middleware.NewAuth(sessionManager)
 	repo := repository.NewRepositoryContainer(db)
+	credentialManager := credential.New(repo)
 
 	apps := app.NewApp(conf, mj, logger, repo, sessionManager)
 
@@ -70,6 +72,7 @@ func main() {
 		conf,
 		apps.AuthApp,
 		apps.TemplateApp,
+		credentialManager,
 		midware,
 	)
 	log.Fatal(restApp.Listen(port))

@@ -135,9 +135,9 @@ func (r DeleteTemplateRequest) Validate() error {
 }
 
 type ListTemplatesRequest struct {
-	AccountID string 
-	Page      int    
-	PageSize  int    
+	AccountID string
+	Page      int
+	PageSize  int
 }
 
 func (r ListTemplatesRequest) Validate() error {
@@ -189,5 +189,31 @@ func (r ExportTemplateRequest) Validate() error {
 		validation.Field(&r.TemplateID, validation.Required),
 		validation.Field(&r.Provider, validation.Required),
 		validation.Field(&r.Credentials, validation.Required),
+	)
+}
+
+type CredentialInput struct {
+	ID string `json:"id"`
+	// AccountID string `json:"account_id"`
+	Platform entity.Platform     `json:"platform"`
+	Type     entity.PlatformType `json:"type"`
+	Meta     entity.Map          `json:"meta"`
+}
+
+func (c *CredentialInput) ValidateCreate() error {
+	return validation.ValidateStruct(c,
+		// validation.Field(&c.AccountID, validation.Required),
+		validation.Field(&c.Platform, validation.Required, validation.In(entity.MAILJET, entity.MAILGUN)),
+		validation.Field(&c.Type, validation.Required, validation.In(entity.EMAIL, entity.SMS, entity.PUSH)),
+		validation.Field(&c.Meta, validation.Required),
+	)
+}
+
+func (c *CredentialInput) ValidateUpdate() error {
+	return validation.ValidateStruct(c,
+		validation.Field(&c.ID, validation.Required),
+		// validation.Field(&c.AccountID, validation.Empty),
+		validation.Field(&c.Platform, validation.In(entity.MAILJET, entity.MAILGUN)),
+		validation.Field(&c.Type, validation.In(entity.EMAIL, entity.SMS, entity.PUSH)),
 	)
 }

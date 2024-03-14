@@ -2,6 +2,7 @@ package rest
 
 import (
 	"template-manager/internal/app/auth"
+	"template-manager/internal/app/credential"
 	"template-manager/internal/app/template"
 	"template-manager/pkg/config"
 
@@ -14,10 +15,11 @@ type Middleware interface {
 }
 
 type server struct {
-	conf        *config.Config
-	authApp     *auth.App
-	templateApp *template.App
-	middleware  Middleware
+	conf          *config.Config
+	authApp       *auth.App
+	templateApp   *template.App
+	credentialApp *credential.Credential
+	middleware    Middleware
 }
 
 // New creates a new fiber app
@@ -25,13 +27,15 @@ func New(
 	conf *config.Config,
 	authApp *auth.App,
 	templateApp *template.App,
+	credentialApp *credential.Credential,
 	middleware Middleware,
 ) *server {
 	return &server{
-		conf:        conf,
-		authApp:     authApp,
-		templateApp: templateApp,
-		middleware:  middleware,
+		conf:          conf,
+		authApp:       authApp,
+		templateApp:   templateApp,
+		credentialApp: credentialApp,
+		middleware:    middleware,
 	}
 }
 
@@ -68,6 +72,13 @@ func (s server) Listen(port string) error {
 	api.Delete("/templates/:id", s.DeleteTemplate)
 	api.Post("/templates/import", s.ImportTemplate)
 	api.Post("/templates/export", s.ExportTemplate)
+
+	// Define API endpoints for managing credentials\
+	api.Post("/credentials", s.AddCredential)
+	api.Get("/credentials", s.GetCredentials)
+	api.Get("/credentials/:id", s.GetCredential)
+	api.Put("/credentials", s.UpdateCredential)
+	api.Delete("/credentials/:id", s.DeleteCredential)
 
 	// Start the server on port 8080
 	return app.Listen(port)
