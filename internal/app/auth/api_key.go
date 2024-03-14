@@ -8,7 +8,7 @@ import (
 	"template-manager/internal/shared"
 )
 
-func (a *App) CreateAccessKey(ctx context.Context, req shared.CreateAccessKeyRequest) error {
+func (a App) CreateAccessKey(ctx context.Context, req shared.CreateAccessKeyRequest) error {
 	var key = entity.Key{
 		AccountID: req.AccountID,
 		Name:      req.AccessKeyName,
@@ -25,18 +25,20 @@ func (a *App) CreateAccessKey(ctx context.Context, req shared.CreateAccessKeyReq
 	return nil
 }
 
-func (a *App) ListAccessKeys(ctx context.Context, req shared.ListAccessKeysRequest) ([]entity.Key, error) {
+func (a App) ListAccessKeys(ctx context.Context, req shared.ListAccessKeysRequest) ([]entity.Key, error) {
 	var (
 		keys []entity.Key
 		err  error
 	)
-	if keys, err = a.db.KeyRepository.Find(ctx, "created_at IS NOT NULL"); err != nil {
+	if keys, err = a.db.KeyRepository.Find(
+		ctx,
+		&entity.Key{AccountID: req.AccountID}); err != nil {
 		return nil, errors.New("couldn't find matching keys: " + err.Error())
 	}
 	return keys, nil
 }
 
-func (a *App) DeleteAccessKey(ctx context.Context, req shared.DeleteAccessKeyRequest) error {
+func (a App) DeleteAccessKey(ctx context.Context, req shared.DeleteAccessKeyRequest) error {
 	var key = entity.Key{
 		AccountID: req.AccountID,
 		ID:        req.AccessKeyID,

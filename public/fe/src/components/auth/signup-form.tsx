@@ -1,116 +1,148 @@
 "use client";
 
 import * as React from "react"
-
+import { useState } from "react";
+import { useTransition } from "react";
 import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
-import { Button } from "@/registry/new-york/ui/button"
-import { Input } from "@/registry/new-york/ui/input"
-import { Label } from "@/registry/new-york/ui/label"
+import { Icons } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/new-york/input"
+import { signUpRequest as signUp } from "@/actions/signup"
+import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { SignupSchema } from "@/schemas";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 
 
-import { useRouter } from 'next/navigation'
-import { useToast } from "@/components/ui/use-toast"
+interface SignupFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+
+export function SignupForm({ className, ...props }: SignupFormProps) {
+
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
+
+  const form = useForm<z.infer<typeof SignupSchema>>({
+    resolver: zodResolver(SignupSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
 
-export async function signUpRequest(email: string,): Promise<Response> {
-  const requestData = {
-    email,
-  };
+  const onSubmit = (values: z.infer<typeof SignupSchema>) => {
+    setError("");
+    setSuccess("");
 
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestData)
-  };
+    startTransition(() => {
+      signUp(values.email)
+        .then((data) => {
+          if (data?.status === false) {
+            form.reset();
+            setError(data.message);
+          }
 
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/users/reset-password`, requestOptions);
-    // Optionally handle response data here
-    const data = await response.json();
-
-    //check if the response is successful
-    if (!data.status) {
-      throw new Error(data.message);
-    }
-    return data as Response;
-  } catch (error : any) {
-    throw new Error(error.message);
-  }
-}
-
-interface Response<T = any> {
-  status: boolean;
-  message: string;
-  data?: T;
-}
-
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
-
-export function UserSignupForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const { toast } = useToast()
-  const router = useRouter(); // Initialize useRouter
-  const [email, setEmail] = React.useState<string>("");
-
-  
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    setIsLoading(true)
-
-    signUpRequest(email)
-      .then((data) => {
-        setIsLoading(false);
-        toast({
-          title: "Success",
-          description: data.message,
+          if (data?.status) {
+            form.reset();
+            setSuccess(data.message);
+          }
         })
-        
-        setTimeout(() => {
-          router.push('/auth/login');
-        }, 3000)
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message,
-        })
-      });
-  }
+        .catch(() => setError("Something went wrong"));
+    });
+  };
 
   return (
-    <div className={cn("grid gap-9", className)} {...props}>
-      <form onSubmit={onSubmit}>
-        <div className="grid gap-5">
-          <div className="grid gap-5">
-            <Label className="sr-only" htmlFor="email">
-              Email
-            </Label>
-            <Input
-              id="email"
-              placeholder="name@example.com"
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+    <div className="container relative h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-1 lg:px-0">
+
+      <div className="lg:p-auto pt-10 ">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Create an account
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your email below to create your account
+            </p>
           </div>
-          <Button disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign Up
-          </Button>
-        </div>
-      </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+          <div className={cn("grid gap-9", className)} {...props}>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <div className="grid gap-5">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            placeholder="name@example.com"
+                            type="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {
+                    error && <FormError message={error} />
+                  }
+                  {
+                    success && <FormSuccess message={success} />
+                  }
+                  <Button disabled={isPending}>
+                    {isPending && (
+                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Sign Up
+                  </Button>
+                </div>
+              </form>
+            </Form>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <Button variant="link" >
+                <a href="/auth/login" className="font-small p-2 text-primary opacity-[0.60] hover:opacity-[1.0]">
+                  Have an account? Login
+                </a>
+              </Button>
+            </div>
+          </div>
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            By clicking sign up, you agree to our{" "}
+            <Link
+              href="/terms"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </div>
       </div>
     </div>

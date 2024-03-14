@@ -4,12 +4,12 @@ import * as React from "react"
 import { useRouter } from 'next/navigation'
 
 import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
-import { Button } from "@/registry/new-york/ui/button"
-import { Input } from "@/registry/new-york/ui/input"
-import { Label } from "@/registry/new-york/ui/label"
+import { Icons } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/new-york/input"
+import { Label } from "@/components/ui/new-york/label"
 
-import { buttonVariants } from "@/registry/new-york/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 
 interface UploadTemplateProps extends React.HTMLAttributes<HTMLDivElement> { }
 

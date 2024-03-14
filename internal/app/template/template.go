@@ -19,11 +19,11 @@ type App struct {
 	env    string
 	config *config.Config
 	logger *slog.Logger
-	db     *repository.Container // TODO: replace with repository
+	db     repository.Container // TODO: replace with repository
 
 }
 
-func New(config *config.Config, logger *slog.Logger, db *repository.Container) *App {
+func New(config *config.Config, logger *slog.Logger, db repository.Container) *App {
 	return &App{
 		config: config,
 		db:     db,
@@ -76,6 +76,10 @@ func (a *App) Update(ctx context.Context, req shared.UpdateTemplateRequest) erro
 		return err
 	}
 	newVersion := existing.Version + 1
+	if req.Vars == nil {
+		req.Vars = make(entity.Map)
+		req.Vars["version"] = newVersion
+	}
 	return a.db.TemplateRepository.Create(ctx, &entity.Template{
 		AccountID:   req.AccountID,
 		Name:        fmt.Sprintf("%s-v%d", existing.Name, newVersion),
@@ -89,10 +93,24 @@ func (a *App) Update(ctx context.Context, req shared.UpdateTemplateRequest) erro
 }
 
 func (a *App) Edit(ctx context.Context, req shared.UpdateTemplateRequest) error {
+	existing, err := a.db.TemplateRepository.Get(ctx, "id = ? AND account_id = ?", req.TemplateID, req.AccountID)
+	if err != nil {
+		return err
+	}
+	if req.Vars == nil {
+		req.Vars = make(entity.Map)
+		req.Vars["version"] = existing.Version
+	}
 	return a.db.TemplateRepository.Update(ctx, &entity.Template{
-		AccountID: req.AccountID,
-		Location:  req.Location,
-		Vars:      req.Vars,
+		ID:          req.TemplateID,
+		AccountID:   req.AccountID,
+		Name:        existing.Name,
+		Slug:        existing.Slug,
+		Version:     existing.Version,
+		Location:    req.Location,
+		ContentType: existing.ContentType,
+		Vars:        req.Vars,
+		Active:      existing.Active,
 	})
 }
 

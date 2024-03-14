@@ -27,11 +27,11 @@ type App struct {
 	config *config.Config
 	email  email.Provider
 	logger *slog.Logger
-	db     *repository.Container // TODO: replace with repository
+	db     repository.Container // TODO: replace with repository
 	sess   SessionManager
 }
 
-func New(config *config.Config, email email.Provider, logger *slog.Logger, db *repository.Container, sessionManager SessionManager) *App {
+func New(config *config.Config, email email.Provider, logger *slog.Logger, db repository.Container, sessionManager SessionManager) *App {
 	return &App{
 		config: config,
 		email:  email,

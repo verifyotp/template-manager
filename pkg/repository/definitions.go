@@ -17,6 +17,7 @@ type AccountRepositoryInterface[T entity.Account] interface {
 type KeyRepositoryInterface[T entity.Key] interface {
 	Create(ctx context.Context, t *T) error
 	Find(ctx context.Context, conds ...interface{}) ([]T, error)
+	FindManyWithOptions(ctx context.Context, query any, opts ...Opt) ([]T, error)
 	Delete(ctx context.Context, t *T) error
 }
 

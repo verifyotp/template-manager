@@ -14,7 +14,7 @@ func (s *server) AddKey(c *fiber.Ctx) error {
 	if err != nil {
 		return HandleBadRequest(c, err)
 	}
-
+	request.AccountID = c.Locals("account_id").(string)
 	err = s.authApp.CreateAccessKey(ctx, request)
 	if err != nil {
 		return HandleError(c, err)
@@ -25,8 +25,9 @@ func (s *server) AddKey(c *fiber.Ctx) error {
 
 func (s *server) ListAccessKeys(c *fiber.Ctx) error {
 	ctx := c.Context()
-
-	var request shared.ListAccessKeysRequest
+	var request = shared.ListAccessKeysRequest{
+		AccountID: c.Locals("account_id").(string),
+	}
 	keys, err := s.authApp.ListAccessKeys(ctx, request)
 	if err != nil {
 		return HandleError(c, err)
