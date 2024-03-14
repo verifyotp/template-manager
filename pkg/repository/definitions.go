@@ -29,3 +29,12 @@ type TemplateRepositoryInterface[T entity.Template] interface {
 	Delete(ctx context.Context, t *T) error
 	FindWithPagination(ctx context.Context, query any, opts ...Opt) (*util.PaginationT[[]T], error)
 }
+
+type CredentialRepositoryInterface[T entity.Credential] interface {
+	Create(ctx context.Context, t *T) error
+	Find(ctx context.Context, conds ...interface{}) ([]T, error)
+	Get(ctx context.Context, conds ...interface{}) (*T, error)
+	Update(ctx context.Context, E *T) error
+	Delete(ctx context.Context, t *T) error
+	FindWithPagination(ctx context.Context, query any, opts ...Opt) (*util.PaginationT[[]T], error)
+}

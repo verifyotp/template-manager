@@ -35,7 +35,7 @@ func (m *Mailjet) validateCredential(input *email.AuthCredential) error {
 	return nil
 }
 
-func (m *Mailjet) GetTemplates(input *email.TemplateQuery) (*email.TemplateList, error) {
+func (m *Mailjet) GetTemplates(input *email.TemplateQuery) (*email.TemplateResponse, error) {
 	client, err := m.initMailjetClient(&input.AuthCredential)
 	if err != nil {
 		return nil, err
@@ -49,17 +49,17 @@ func (m *Mailjet) GetTemplates(input *email.TemplateQuery) (*email.TemplateList,
 	if err != nil {
 		return nil, err
 	}
-	response := &email.TemplateList{
+	response := &email.TemplateResponse{
 		Count: count,
 		Total: total,
 	}
-	if err := m.marshaler.Unmarshal(marshaledData, response.Data); err != nil {
+	if err := m.marshaler.Unmarshal(marshaledData, response.DataList); err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func (m *Mailjet) GetTemplate(input *email.TemplateQuery) (*email.TemplateList, error) {
+func (m *Mailjet) GetTemplate(input *email.TemplateQuery) (*email.TemplateResponse, error) {
 	client, err := m.initMailjetClient(&input.AuthCredential)
 	if err != nil {
 		return nil, err
@@ -76,14 +76,14 @@ func (m *Mailjet) GetTemplate(input *email.TemplateQuery) (*email.TemplateList, 
 	if err != nil {
 		return nil, err
 	}
-	response := new(email.TemplateList)
-	if err := m.marshaler.Unmarshal(marshaledData, response.Data); err != nil {
+	response := new(email.TemplateResponse)
+	if err := m.marshaler.Unmarshal(marshaledData, response.DataList); err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func (m *Mailjet) AddTemplate(input *email.TemplateInput) (*email.TemplateList, error) {
+func (m *Mailjet) AddTemplate(input *email.TemplateInput) (*email.TemplateResponse, error) {
 	client, err := m.initMailjetClient(&input.AuthCredential)
 	if err != nil {
 		return nil, err
@@ -107,8 +107,8 @@ func (m *Mailjet) AddTemplate(input *email.TemplateInput) (*email.TemplateList, 
 	if err != nil {
 		return nil, err
 	}
-	response := new(email.TemplateList)
-	if err := m.marshaler.Unmarshal(marshaledData, response.Data); err != nil {
+	response := new(email.TemplateResponse)
+	if err := m.marshaler.Unmarshal(marshaledData, response.DataList); err != nil {
 		return nil, err
 	}
 	return response, nil
@@ -162,7 +162,7 @@ func (m *Mailjet) DeleteTemplate(input *email.TemplateQuery) error {
 	return nil
 }
 
-func (m *Mailjet) GetTemplateContent(input *email.TemplateQuery) (*email.TemplateContentList, error) {
+func (m *Mailjet) GetTemplateContent(input *email.TemplateQuery) (*email.TemplateContentResponse, error) {
 	client, err := m.initMailjetClient(&input.AuthCredential)
 	if err != nil {
 		return nil, err
@@ -180,14 +180,14 @@ func (m *Mailjet) GetTemplateContent(input *email.TemplateQuery) (*email.Templat
 	if err != nil {
 		return nil, err
 	}
-	response := new(email.TemplateContentList)
+	response := new(email.TemplateContentResponse)
 	if err := m.marshaler.Unmarshal(marshaledData, response); err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func (m *Mailjet) AddTemplateContent(input *email.TemplateInput) (*email.TemplateContentList, error) {
+func (m *Mailjet) AddTemplateContent(input *email.TemplateInput) (*email.TemplateContentResponse, error) {
 	client, err := m.initMailjetClient(&input.AuthCredential)
 	if err != nil {
 		return nil, err
@@ -213,7 +213,7 @@ func (m *Mailjet) AddTemplateContent(input *email.TemplateInput) (*email.Templat
 	if err != nil {
 		return nil, err
 	}
-	response := new(email.TemplateContentList)
+	response := new(email.TemplateContentResponse)
 	if err := m.marshaler.Unmarshal(marshaledData, response); err != nil {
 		return nil, err
 	}
