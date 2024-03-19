@@ -29,7 +29,7 @@ func cleanPort(port string) string {
 
 func main() {
 	var server, port string
-	flag.StringVar(&server, "server", "rest", "grpc or rest")
+	flag.StringVar(&server, "server", "rest", "graphql or rest")
 	flag.StringVar(&port, "port", "8080", "port to listen on")
 	flag.Parse()
 	port = cleanPort(port)
@@ -50,6 +50,7 @@ func main() {
 	// 	&entity.Session{},
 	// 	&entity.Template{},
 	// 	&entity.TemplateSync{},
+	// 	&entity.Credential{},
 	// )
 	// if err != nil {
 	// 	log.Fatal(err)

@@ -22,6 +22,8 @@ go.work
 
 .idea
 
+node_modules
+
 
 
 
